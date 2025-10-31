@@ -17,6 +17,8 @@ const form = useForm({
     _method: 'PUT',
     name: props.user.name,
     email: props.user.email,
+    date_of_birth: props.user.date_of_birth,
+    open_api_key: props.user.open_api_key,
     photo: null,
 });
 
@@ -174,6 +176,35 @@ const clearPhotoFileInput = () => {
                         A new verification link has been sent to your email address.
                     </div>
                 </div>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="date_of_birth" value="Date of Birth" />
+                <TextInput
+                    id="date_of_birth"
+                    v-model="form.date_of_birth"
+                    type="date"
+                    class="mt-1 block w-full"
+                    autocomplete="bday"
+                />
+                <InputError :message="form.errors.date_of_birth" class="mt-2" />
+            </div>
+
+            <!-- OpenAI API Key -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="open_api_key" value="OpenAI API Key" />
+                <TextInput
+                    id="open_api_key"
+                    v-model="form.open_api_key"
+                    type="text"
+                    class="mt-1 block w-full"
+                    autocomplete="off"
+                />
+                <InputError :message="form.errors.open_api_key" class="mt-2" />
+                <p class="mt-2 text-sm text-gray-600">
+                    Your API key will be stored securely and never shared.
+                </p>
             </div>
         </template>
 

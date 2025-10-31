@@ -21,6 +21,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'date_of_birth' => ['nullable', 'date', 'before:today'],
+            'open_api_key' => ['nullable', 'string', 'max:255'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
@@ -34,6 +36,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $user->forceFill([
                 'name' => $input['name'],
                 'email' => $input['email'],
+                'date_of_birth' => $input['date_of_birth'] ?? null,
+                'open_api_key' => $input['open_api_key'] ?? null,
             ])->save();
         }
     }
@@ -49,6 +53,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'name' => $input['name'],
             'email' => $input['email'],
             'email_verified_at' => null,
+            'date_of_birth' => $input['date_of_birth'] ?? null,
+            'open_api_key' => $input['open_api_key'] ?? null,
         ])->save();
 
         $user->sendEmailVerificationNotification();
