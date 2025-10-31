@@ -1,8 +1,5 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -28,117 +25,169 @@ const submit = () => {
 <template>
     <Head title="Register" />
 
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
+    <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col">
+        <!-- Mobile-First Container -->
+        <div class="flex-1 flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
+            <div class="w-full max-w-md mx-auto">
+                <!-- Logo/Header -->
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        MacroLog
+                    </h1>
+                    <p class="mt-2 text-gray-600">Create your account to get started</p>
+                </div>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="username"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="date_of_birth" value="Date of Birth" />
-                <TextInput
-                    id="date_of_birth"
-                    v-model="form.date_of_birth"
-                    type="date"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="bday"
-                />
-                <InputError class="mt-2" :message="form.errors.date_of_birth" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="gender" value="Gender" />
-                <select
-                    id="gender"
-                    v-model="form.gender"
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                    required
-                >
-                    <option value="">Select gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                    <option value="prefer_not_to_say">Prefer not to say</option>
-                </select>
-                <InputError class="mt-2" :message="form.errors.gender" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
-
-            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
-                <InputLabel for="terms">
-                    <div class="flex items-center">
-                        <Checkbox id="terms" v-model:checked="form.terms" name="terms" required />
-
-                        <div class="ms-2">
-                            I agree to the <a target="_blank" :href="route('terms.show')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Privacy Policy</a>
+                <!-- Register Form Card -->
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    <form @submit.prevent="submit" class="p-6 sm:p-8 space-y-5">
+                        <!-- Name -->
+                        <div>
+                            <InputLabel for="name" value="Full Name" class="text-sm font-semibold" />
+                            <TextInput
+                                id="name"
+                                v-model="form.name"
+                                type="text"
+                                class="mt-2 block w-full text-base"
+                                required
+                                autofocus
+                                autocomplete="name"
+                                placeholder="John Doe"
+                            />
+                            <InputError class="mt-2" :message="form.errors.name" />
                         </div>
-                    </div>
-                    <InputError class="mt-2" :message="form.errors.terms" />
-                </InputLabel>
-            </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link :href="route('login')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Already registered?
-                </Link>
+                        <!-- Email -->
+                        <div>
+                            <InputLabel for="email" value="Email Address" class="text-sm font-semibold" />
+                            <TextInput
+                                id="email"
+                                v-model="form.email"
+                                type="email"
+                                class="mt-2 block w-full text-base"
+                                required
+                                autocomplete="username"
+                                placeholder="you@example.com"
+                            />
+                            <InputError class="mt-2" :message="form.errors.email" />
+                        </div>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
+                        <!-- Date of Birth & Gender in Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Date of Birth -->
+                            <div>
+                                <InputLabel for="date_of_birth" value="Date of Birth" class="text-sm font-semibold" />
+                                <TextInput
+                                    id="date_of_birth"
+                                    v-model="form.date_of_birth"
+                                    type="date"
+                                    class="mt-2 block w-full text-base"
+                                    required
+                                    autocomplete="bday"
+                                />
+                                <InputError class="mt-2" :message="form.errors.date_of_birth" />
+                            </div>
+
+                            <!-- Gender -->
+                            <div>
+                                <InputLabel for="gender" value="Gender" class="text-sm font-semibold" />
+                                <select
+                                    id="gender"
+                                    v-model="form.gender"
+                                    class="mt-2 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-base"
+                                    required
+                                >
+                                    <option value="">Select</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer_not_to_say">Prefer not to say</option>
+                                </select>
+                                <InputError class="mt-2" :message="form.errors.gender" />
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <InputLabel for="password" value="Password" class="text-sm font-semibold" />
+                            <TextInput
+                                id="password"
+                                v-model="form.password"
+                                type="password"
+                                class="mt-2 block w-full text-base"
+                                required
+                                autocomplete="new-password"
+                                placeholder="••••••••"
+                            />
+                            <InputError class="mt-2" :message="form.errors.password" />
+                            <p class="mt-1.5 text-xs text-gray-500">Must be at least 8 characters</p>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div>
+                            <InputLabel for="password_confirmation" value="Confirm Password" class="text-sm font-semibold" />
+                            <TextInput
+                                id="password_confirmation"
+                                v-model="form.password_confirmation"
+                                type="password"
+                                class="mt-2 block w-full text-base"
+                                required
+                                autocomplete="new-password"
+                                placeholder="••••••••"
+                            />
+                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="pt-2">
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input
+                                        id="terms"
+                                        v-model="form.terms"
+                                        type="checkbox"
+                                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 h-4 w-4"
+                                        required
+                                    />
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <label for="terms" class="text-gray-700">
+                                        I agree to the
+                                        <a target="_blank" :href="route('terms.show')" class="font-medium text-indigo-600 hover:text-indigo-500">Terms of Service</a>
+                                        and
+                                        <a target="_blank" :href="route('policy.show')" class="font-medium text-indigo-600 hover:text-indigo-500">Privacy Policy</a>
+                                    </label>
+                                </div>
+                            </div>
+                            <InputError class="mt-2" :message="form.errors.terms" />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <PrimaryButton
+                            class="w-full justify-center py-3 text-base font-semibold mt-6"
+                            :class="{ 'opacity-25': form.processing }"
+                            :disabled="form.processing"
+                        >
+                            <span v-if="!form.processing">Create Account</span>
+                            <span v-else>Creating account...</span>
+                        </PrimaryButton>
+
+                        <!-- Login Link -->
+                        <div class="text-center pt-4 border-t border-gray-100">
+                            <p class="text-sm text-gray-600">
+                                Already have an account?
+                                <Link :href="route('login')" class="font-medium text-indigo-600 hover:text-indigo-500 transition">
+                                    Sign in →
+                                </Link>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <p class="mt-8 text-center text-sm text-gray-500">
+                    Track your macros, achieve your goals
+                </p>
             </div>
-        </form>
-    </AuthenticationCard>
+        </div>
+    </div>
 </template>

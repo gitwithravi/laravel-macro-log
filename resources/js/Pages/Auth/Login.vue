@@ -1,8 +1,5 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -33,65 +30,111 @@ const submit = () => {
 <template>
     <Head title="Log in" />
 
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="current-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-between mt-4">
-                <div class="flex items-center gap-4">
-                    <Link v-if="canRegister" :href="route('register')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Don't have an account?
+    <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col">
+        <!-- Mobile-First Container -->
+        <div class="flex-1 flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
+            <div class="w-full max-w-md mx-auto">
+                <!-- Logo/Header -->
+                <div class="text-center mb-8">
+                    <Link :href="route('dashboard')" class="inline-block">
+                        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            MacroLog
+                        </h1>
                     </Link>
-
-                    <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Forgot your password?
-                    </Link>
+                    <p class="mt-2 text-gray-600">Welcome back! Sign in to your account</p>
                 </div>
 
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
+                <!-- Status Message -->
+                <div v-if="status" class="mb-4 p-4 rounded-xl bg-green-50 border border-green-200">
+                    <p class="text-sm font-medium text-green-800">{{ status }}</p>
+                </div>
+
+                <!-- Login Form Card -->
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    <form @submit.prevent="submit" class="p-6 sm:p-8 space-y-6">
+                        <!-- Email -->
+                        <div>
+                            <InputLabel for="email" value="Email Address" class="text-sm font-semibold" />
+                            <TextInput
+                                id="email"
+                                v-model="form.email"
+                                type="email"
+                                class="mt-2 block w-full text-base"
+                                required
+                                autofocus
+                                autocomplete="username"
+                                placeholder="you@example.com"
+                            />
+                            <InputError class="mt-2" :message="form.errors.email" />
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <InputLabel for="password" value="Password" class="text-sm font-semibold" />
+                            <TextInput
+                                id="password"
+                                v-model="form.password"
+                                type="password"
+                                class="mt-2 block w-full text-base"
+                                required
+                                autocomplete="current-password"
+                                placeholder="••••••••"
+                            />
+                            <InputError class="mt-2" :message="form.errors.password" />
+                        </div>
+
+                        <!-- Remember Me -->
+                        <div class="flex items-center">
+                            <input
+                                id="remember"
+                                v-model="form.remember"
+                                type="checkbox"
+                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 h-4 w-4"
+                            />
+                            <label for="remember" class="ml-3 text-sm text-gray-700">
+                                Remember me for 30 days
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <PrimaryButton
+                            class="w-full justify-center py-3 text-base font-semibold"
+                            :class="{ 'opacity-25': form.processing }"
+                            :disabled="form.processing"
+                        >
+                            <span v-if="!form.processing">Sign In</span>
+                            <span v-else>Signing in...</span>
+                        </PrimaryButton>
+
+                        <!-- Links -->
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-gray-100">
+                            <Link
+                                v-if="canResetPassword"
+                                :href="route('password.request')"
+                                class="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition"
+                            >
+                                Forgot password?
+                            </Link>
+
+                            <Link
+                                v-if="canRegister"
+                                :href="route('register')"
+                                class="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition"
+                            >
+                                Create an account →
+                            </Link>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <p class="mt-8 text-center text-sm text-gray-500">
+                    By signing in, you agree to our
+                    <a href="#" class="font-medium text-gray-700 hover:text-gray-900">Terms</a>
+                    and
+                    <a href="#" class="font-medium text-gray-700 hover:text-gray-900">Privacy Policy</a>
+                </p>
             </div>
-        </form>
-    </AuthenticationCard>
+        </div>
+    </div>
 </template>
