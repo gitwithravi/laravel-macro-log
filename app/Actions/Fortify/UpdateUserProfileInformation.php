@@ -23,6 +23,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other,prefer_not_to_say'],
+            'height' => ['nullable', 'numeric', 'min:100', 'max:250'],
             'open_api_key' => ['nullable', 'string', 'max:255'],
         ])->validateWithBag('updateProfileInformation');
 
@@ -39,6 +40,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'email' => $input['email'],
                 'date_of_birth' => $input['date_of_birth'] ?? null,
                 'gender' => $input['gender'] ?? null,
+                'height' => $input['height'] ?? null,
                 'open_api_key' => !empty($input['open_api_key']) ? $input['open_api_key'] : null,
             ])->save();
         }
@@ -57,6 +59,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'email_verified_at' => null,
             'date_of_birth' => $input['date_of_birth'] ?? null,
             'gender' => $input['gender'] ?? null,
+            'height' => $input['height'] ?? null,
             'open_api_key' => !empty($input['open_api_key']) ? $input['open_api_key'] : null,
         ])->save();
 

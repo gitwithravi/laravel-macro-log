@@ -1,13 +1,15 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import TextArea from '@/Components/TextArea.vue';
 import InputError from '@/Components/InputError.vue';
+import axios from 'axios';
 
 const props = defineProps({
     goals: Array,
@@ -27,6 +29,22 @@ const form = useForm({
     daily_goal_fat: '',
     goal_target_date: '',
     is_active: true,
+});
+
+// Intelligent Calculate modal state
+const showCalculatorModal = ref(false);
+const isCalculating = ref(false);
+const calculationError = ref('');
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
+const calculatorForm = useForm({
+    height: user.value.height || '',
+    weight: '',
+    target_weight: '',
+    target_date: '',
+    daily_activity: '',
 });
 
 const activeGoal = computed(() => {
@@ -100,6 +118,56 @@ const toggleActive = (goal) => {
     router.post(route('goals.toggle-active', goal.id), {}, {
         preserveScroll: true,
     });
+};
+
+// Intelligent Calculator functions
+const openCalculatorModal = () => {
+    calculatorForm.reset();
+    calculatorForm.height = user.value.height || '';
+    calculatorForm.weight = form.current_weight || '';
+    calculatorForm.target_weight = form.target_weight || '';
+    calculatorForm.target_date = form.goal_target_date || '';
+    calculationError.value = '';
+    showCalculatorModal.value = true;
+};
+
+const closeCalculatorModal = () => {
+    showCalculatorModal.value = false;
+    calculationError.value = '';
+};
+
+const calculateNutrition = async () => {
+    calculationError.value = '';
+    isCalculating.value = true;
+
+    try {
+        const response = await axios.post(route('goals.calculate-nutrition'), {
+            height: calculatorForm.height,
+            weight: calculatorForm.weight,
+            target_weight: calculatorForm.target_weight,
+            target_date: calculatorForm.target_date,
+            daily_activity: calculatorForm.daily_activity,
+        });
+
+        if (response.data.success) {
+            // Populate the main form with calculated values
+            form.daily_goal_calories = response.data.data.daily_goal_calories;
+            form.daily_goal_protein = response.data.data.daily_goal_protein;
+            form.daily_goal_carb = response.data.data.daily_goal_carb;
+            form.daily_goal_fat = response.data.data.daily_goal_fat;
+
+            // Close calculator modal
+            closeCalculatorModal();
+        }
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.error) {
+            calculationError.value = error.response.data.error;
+        } else {
+            calculationError.value = 'Failed to calculate nutrition goals. Please try again.';
+        }
+    } finally {
+        isCalculating.value = false;
+    }
 };
 
 const weightDifference = (goal) => {
@@ -306,7 +374,22 @@ const weightDifference = (goal) => {
 
                             <!-- Daily Nutrition Goals -->
                             <div class="bg-gray-50 rounded-xl p-4 space-y-4">
-                                <h4 class="font-semibold text-gray-900 text-sm">Daily Nutrition Goals</h4>
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold text-gray-900 text-sm">Daily Nutrition Goals</h4>
+
+                                    <!-- Intelligent Calculate Button (only show if user has API key) -->
+                                    <button
+                                        v-if="user.open_api_key"
+                                        type="button"
+                                        @click="openCalculatorModal"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors duration-150"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                        </svg>
+                                        Intelligent Calculate
+                                    </button>
+                                </div>
 
                                 <div>
                                     <InputLabel for="daily_goal_calories" value="Calories (kcal)" class="text-xs" />
@@ -430,6 +513,158 @@ const weightDifference = (goal) => {
                                     Delete
                                 </DangerButton>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </teleport>
+
+        <!-- Intelligent Calculate Modal -->
+        <teleport to="body">
+            <div
+                v-if="showCalculatorModal"
+                class="fixed inset-0 z-50 overflow-y-auto"
+                @click.self="closeCalculatorModal"
+            >
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                    <!-- Background overlay -->
+                    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeCalculatorModal"></div>
+
+                    <!-- Modal panel -->
+                    <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                </svg>
+                                <h3 class="text-xl font-bold text-white">Intelligent Calculate</h3>
+                            </div>
+                            <button
+                                type="button"
+                                @click="closeCalculatorModal"
+                                class="text-white/80 hover:text-white transition-colors"
+                            >
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                            <p class="text-sm text-gray-600">
+                                Enter your information below and let AI calculate your optimal daily nutrition goals.
+                            </p>
+
+                            <!-- Error Message -->
+                            <div v-if="calculationError" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <p class="text-sm text-red-600">{{ calculationError }}</p>
+                            </div>
+
+                            <!-- Height -->
+                            <div>
+                                <InputLabel for="calc_height" value="Height (cm)" />
+                                <TextInput
+                                    id="calc_height"
+                                    v-model="calculatorForm.height"
+                                    type="number"
+                                    step="0.01"
+                                    min="100"
+                                    max="250"
+                                    class="mt-1 block w-full"
+                                    placeholder="e.g., 175"
+                                    required
+                                    :disabled="isCalculating"
+                                />
+                            </div>
+
+                            <!-- Weight -->
+                            <div>
+                                <InputLabel for="calc_weight" value="Current Weight (kg)" />
+                                <TextInput
+                                    id="calc_weight"
+                                    v-model="calculatorForm.weight"
+                                    type="number"
+                                    step="0.01"
+                                    min="20"
+                                    max="500"
+                                    class="mt-1 block w-full"
+                                    placeholder="e.g., 70"
+                                    required
+                                    :disabled="isCalculating"
+                                />
+                            </div>
+
+                            <!-- Target Weight -->
+                            <div>
+                                <InputLabel for="calc_target_weight" value="Target Weight (kg)" />
+                                <TextInput
+                                    id="calc_target_weight"
+                                    v-model="calculatorForm.target_weight"
+                                    type="number"
+                                    step="0.01"
+                                    min="20"
+                                    max="500"
+                                    class="mt-1 block w-full"
+                                    placeholder="e.g., 65"
+                                    required
+                                    :disabled="isCalculating"
+                                />
+                            </div>
+
+                            <!-- Target Date -->
+                            <div>
+                                <InputLabel for="calc_target_date" value="Target Date" />
+                                <TextInput
+                                    id="calc_target_date"
+                                    v-model="calculatorForm.target_date"
+                                    type="date"
+                                    class="mt-1 block w-full"
+                                    required
+                                    :disabled="isCalculating"
+                                />
+                            </div>
+
+                            <!-- Daily Activity -->
+                            <div>
+                                <InputLabel for="calc_daily_activity" value="Daily Activity" />
+                                <TextArea
+                                    id="calc_daily_activity"
+                                    v-model="calculatorForm.daily_activity"
+                                    class="mt-1 block w-full"
+                                    rows="4"
+                                    placeholder="e.g., Light exercise and 7000 steps walk 5 days a week"
+                                    required
+                                    :disabled="isCalculating"
+                                />
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Describe your typical daily physical activity
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="px-6 py-4 bg-gray-50 flex items-center justify-end gap-3">
+                            <SecondaryButton
+                                type="button"
+                                @click="closeCalculatorModal"
+                                :disabled="isCalculating"
+                            >
+                                Cancel
+                            </SecondaryButton>
+                            <PrimaryButton
+                                type="button"
+                                @click="calculateNutrition"
+                                :disabled="isCalculating"
+                                :class="{ 'opacity-50 cursor-not-allowed': isCalculating }"
+                            >
+                                <svg v-if="isCalculating" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                {{ isCalculating ? 'Calculating...' : 'Calculate' }}
+                            </PrimaryButton>
                         </div>
                     </div>
                 </div>

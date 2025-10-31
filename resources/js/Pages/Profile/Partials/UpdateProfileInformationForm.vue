@@ -18,6 +18,7 @@ const form = useForm({
     email: props.user.email,
     date_of_birth: props.user.date_of_birth,
     gender: props.user.gender,
+    height: props.user.height,
     open_api_key: props.user.open_api_key,
     photo: null,
 });
@@ -225,6 +226,25 @@ const clearPhotoFileInput = () => {
                         <option value="prefer_not_to_say">Prefer not to say</option>
                     </select>
                     <InputError :message="form.errors.gender" class="mt-2" />
+                </div>
+
+                <!-- Height -->
+                <div>
+                    <InputLabel for="height" value="Height (cm)" />
+                    <TextInput
+                        id="height"
+                        v-model="form.height"
+                        type="number"
+                        step="0.01"
+                        min="100"
+                        max="250"
+                        class="mt-1 block w-full"
+                        placeholder="e.g., 175"
+                    />
+                    <InputError :message="form.errors.height" class="mt-2" />
+                    <p class="mt-2 text-sm text-gray-500">
+                        Used for calculating nutrition goals with AI.
+                    </p>
                 </div>
 
                 <!-- OpenAI API Key -->

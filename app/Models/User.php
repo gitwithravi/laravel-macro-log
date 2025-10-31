@@ -32,6 +32,7 @@ class User extends Authenticatable
         'password',
         'date_of_birth',
         'gender',
+        'height',
         'open_api_key',
     ];
 
@@ -67,6 +68,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'date_of_birth' => 'date:Y-m-d',
+            'height' => 'decimal:2',
         ];
     }
 

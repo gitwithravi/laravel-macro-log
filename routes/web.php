@@ -26,4 +26,5 @@ Route::middleware([
     // Goal Management Routes
     Route::resource('goals', GoalController::class)->except(['create', 'show', 'edit']);
     Route::post('/goals/{goal}/toggle-active', [GoalController::class, 'toggleActive'])->name('goals.toggle-active');
+    Route::post('/goals/calculate-nutrition', [GoalController::class, 'calculateNutrition'])->name('goals.calculate-nutrition');
 });
