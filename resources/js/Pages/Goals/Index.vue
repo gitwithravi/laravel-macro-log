@@ -25,6 +25,7 @@ const form = useForm({
     daily_goal_protein: '',
     daily_goal_carb: '',
     daily_goal_fat: '',
+    goal_target_date: '',
     is_active: true,
 });
 
@@ -52,6 +53,7 @@ const openEditModal = (goal) => {
     form.daily_goal_protein = goal.daily_goal_protein;
     form.daily_goal_carb = goal.daily_goal_carb;
     form.daily_goal_fat = goal.daily_goal_fat;
+    form.goal_target_date = goal.goal_target_date;
     form.is_active = goal.is_active;
     form.clearErrors();
     showModal.value = true;
@@ -168,6 +170,9 @@ const weightDifference = (goal) => {
                         </div>
                         <div class="text-center text-sm opacity-90">
                             {{ weightDifference(activeGoal).type === 'lose' ? 'Lose' : 'Gain' }} {{ weightDifference(activeGoal).diff }} kg
+                        </div>
+                        <div v-if="activeGoal.goal_target_date" class="text-center text-xs opacity-75 mt-1">
+                            Target: {{ new Date(activeGoal.goal_target_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}
                         </div>
                     </div>
 
@@ -352,6 +357,23 @@ const weightDifference = (goal) => {
                                         />
                                         <InputError :message="form.errors.daily_goal_fat" class="mt-1" />
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Target Date Section -->
+                            <div class="bg-gray-50 rounded-xl p-4 space-y-4">
+                                <h4 class="font-semibold text-gray-900 text-sm">Target Date</h4>
+
+                                <div>
+                                    <InputLabel for="goal_target_date" value="When do you want to reach your goal?" class="text-xs" />
+                                    <TextInput
+                                        id="goal_target_date"
+                                        v-model="form.goal_target_date"
+                                        type="date"
+                                        class="mt-1 block w-full"
+                                    />
+                                    <InputError :message="form.errors.goal_target_date" class="mt-1" />
+                                    <p class="mt-1.5 text-xs text-gray-500">Optional - Set a deadline to stay motivated</p>
                                 </div>
                             </div>
 

@@ -21,6 +21,7 @@ class Goal extends Model
         'daily_goal_carb',
         'daily_goal_fat',
         'is_active',
+        'goal_target_date',
     ];
 
     /**
@@ -38,6 +39,7 @@ class Goal extends Model
             'daily_goal_carb' => 'decimal:2',
             'daily_goal_fat' => 'decimal:2',
             'is_active' => 'boolean',
+            'goal_target_date' => 'date',
         ];
     }
 

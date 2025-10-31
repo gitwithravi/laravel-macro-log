@@ -33,6 +33,7 @@ class GoalController extends Controller
             'daily_goal_protein' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'daily_goal_carb' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'daily_goal_fat' => ['required', 'numeric', 'min:0', 'max:999999.99'],
+            'goal_target_date' => ['nullable', 'date', 'after:today'],
             'is_active' => ['boolean'],
         ]);
 
@@ -63,6 +64,7 @@ class GoalController extends Controller
             'daily_goal_protein' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'daily_goal_carb' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'daily_goal_fat' => ['required', 'numeric', 'min:0', 'max:999999.99'],
+            'goal_target_date' => ['nullable', 'date', 'after:today'],
             'is_active' => ['boolean'],
         ]);
 
