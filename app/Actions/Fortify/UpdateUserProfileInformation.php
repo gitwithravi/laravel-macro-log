@@ -39,7 +39,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'email' => $input['email'],
                 'date_of_birth' => $input['date_of_birth'] ?? null,
                 'gender' => $input['gender'] ?? null,
-                'open_api_key' => $input['open_api_key'] ?? null,
+                'open_api_key' => !empty($input['open_api_key']) ? $input['open_api_key'] : null,
             ])->save();
         }
     }
@@ -57,7 +57,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'email_verified_at' => null,
             'date_of_birth' => $input['date_of_birth'] ?? null,
             'gender' => $input['gender'] ?? null,
-            'open_api_key' => $input['open_api_key'] ?? null,
+            'open_api_key' => !empty($input['open_api_key']) ? $input['open_api_key'] : null,
         ])->save();
 
         $user->sendEmailVerificationNotification();

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import InputError from '@/Components/InputError.vue';
@@ -25,6 +25,22 @@ const form = useForm({
 const verificationLinkSent = ref(null);
 const photoPreview = ref(null);
 const photoInput = ref(null);
+const showApiKey = ref(false);
+
+const maskedApiKey = computed(() => {
+    if (!form.open_api_key) return '';
+    if (showApiKey.value) return form.open_api_key;
+
+    const key = form.open_api_key;
+    if (key.length <= 8) return '***';
+
+    // Show first 7 chars and last 4 chars (e.g., "sk-proj...xyz4")
+    return `${key.substring(0, 7)}...${key.substring(key.length - 4)}`;
+});
+
+const toggleApiKeyVisibility = () => {
+    showApiKey.value = !showApiKey.value;
+};
 
 const updateProfileInformation = () => {
     if (photoInput.value) {
@@ -214,17 +230,39 @@ const clearPhotoFileInput = () => {
                 <!-- OpenAI API Key -->
                 <div>
                     <InputLabel for="open_api_key" value="OpenAI API Key" />
-                    <TextInput
-                        id="open_api_key"
-                        v-model="form.open_api_key"
-                        type="password"
-                        class="mt-1 block w-full"
-                        autocomplete="off"
-                        placeholder="sk-..."
-                    />
+                    <div class="relative">
+                        <!-- Masked Display (when key exists and not revealed) -->
+                        <div
+                            v-if="form.open_api_key && !showApiKey"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 font-mono text-sm text-gray-700 pr-24"
+                        >
+                            {{ maskedApiKey }}
+                        </div>
+
+                        <!-- Editable Input (when revealed or no key set) -->
+                        <TextInput
+                            v-else
+                            id="open_api_key"
+                            v-model="form.open_api_key"
+                            type="text"
+                            class="mt-1 block w-full pr-24"
+                            autocomplete="off"
+                            placeholder="sk-..."
+                        />
+
+                        <!-- Reveal/Hide Button -->
+                        <button
+                            v-if="form.open_api_key"
+                            type="button"
+                            @click="toggleApiKeyVisibility"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                        >
+                            {{ showApiKey ? 'Hide' : 'Reveal' }}
+                        </button>
+                    </div>
                     <InputError :message="form.errors.open_api_key" class="mt-2" />
                     <p class="mt-2 text-sm text-gray-500">
-                        Your API key will be stored securely and never shared.
+                        Your API key will be stored securely and never shared.{{ form.open_api_key ? ' Currently set.' : '' }}
                     </p>
                 </div>
             </div>

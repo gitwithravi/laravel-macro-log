@@ -45,7 +45,6 @@ class User extends Authenticatable
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
-        'open_api_key',
     ];
 
     /**
@@ -67,7 +66,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'date_of_birth' => 'date',
+            'date_of_birth' => 'date:Y-m-d',
         ];
     }
 
