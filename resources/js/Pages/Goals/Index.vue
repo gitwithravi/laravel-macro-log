@@ -200,21 +200,21 @@ const weightDifference = (goal) => {
             <!-- Content -->
             <div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
                 <!-- Active Goal -->
-                <div v-if="activeGoal" class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
+                <div v-if="activeGoal" class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-2">
-                            <div class="bg-white/20 rounded-full px-3 py-1 text-xs font-semibold">
-                                Active Goal
-                            </div>
+                            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                            <span class="text-sm font-medium text-gray-600">Active Goal</span>
                         </div>
-                        <div class="flex gap-2">
-                            <button @click="openEditModal(activeGoal)" class="p-2 hover:bg-white/20 rounded-lg transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <div class="flex gap-1">
+                            <button @click="openEditModal(activeGoal)" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
                                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                 </svg>
                             </button>
-                            <button @click="confirmDelete(activeGoal)" class="p-2 hover:bg-white/20 rounded-lg transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <button @click="confirmDelete(activeGoal)" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                 </svg>
                             </button>
@@ -222,49 +222,95 @@ const weightDifference = (goal) => {
                     </div>
 
                     <!-- Weight Progress -->
-                    <div class="mb-6">
-                        <div class="flex items-end justify-between mb-2">
+                    <div class="mb-6 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-3">
                             <div>
-                                <div class="text-sm opacity-90">Current Weight</div>
-                                <div class="text-3xl font-bold">{{ activeGoal.current_weight }} <span class="text-xl">kg</span></div>
+                                <div class="text-xs font-medium text-gray-500 mb-1">Current</div>
+                                <div class="text-3xl font-bold text-gray-900">
+                                    {{ activeGoal.current_weight }}
+                                    <span class="text-lg font-medium text-gray-500 ml-1">kg</span>
+                                </div>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
+                            <div class="flex flex-col items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                                <div class="mt-2 text-xs font-medium text-gray-600">
+                                    {{ weightDifference(activeGoal).type === 'lose' ? '−' : '+' }}{{ weightDifference(activeGoal).diff }} kg
+                                </div>
+                            </div>
                             <div class="text-right">
-                                <div class="text-sm opacity-90">Target Weight</div>
-                                <div class="text-3xl font-bold">{{ activeGoal.target_weight }} <span class="text-xl">kg</span></div>
+                                <div class="text-xs font-medium text-gray-500 mb-1">Target</div>
+                                <div class="text-3xl font-bold text-gray-900">
+                                    {{ activeGoal.target_weight }}
+                                    <span class="text-lg font-medium text-gray-500 ml-1">kg</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="text-center text-sm opacity-90">
-                            {{ weightDifference(activeGoal).type === 'lose' ? 'Lose' : 'Gain' }} {{ weightDifference(activeGoal).diff }} kg
-                        </div>
-                        <div v-if="activeGoal.goal_target_date" class="text-center text-xs opacity-75 mt-1">
-                            Target: {{ new Date(activeGoal.goal_target_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}
+                        <div v-if="activeGoal.goal_target_date" class="text-center text-xs text-gray-500 pt-3 border-t border-gray-200">
+                            Target Date: {{ new Date(activeGoal.goal_target_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}
                         </div>
                     </div>
 
-                    <!-- Daily Goals Grid -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                            <div class="text-xs opacity-80 mb-1">Calories</div>
-                            <div class="text-2xl font-bold">{{ activeGoal.daily_goal_calories }}</div>
-                            <div class="text-xs opacity-70">kcal/day</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                            <div class="text-xs opacity-80 mb-1">Protein</div>
-                            <div class="text-2xl font-bold">{{ activeGoal.daily_goal_protein }}g</div>
-                            <div class="text-xs opacity-70">per day</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                            <div class="text-xs opacity-80 mb-1">Carbs</div>
-                            <div class="text-2xl font-bold">{{ activeGoal.daily_goal_carb }}g</div>
-                            <div class="text-xs opacity-70">per day</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                            <div class="text-xs opacity-80 mb-1">Fat</div>
-                            <div class="text-2xl font-bold">{{ activeGoal.daily_goal_fat }}g</div>
-                            <div class="text-xs opacity-70">per day</div>
+                    <!-- Daily Nutrition Goals -->
+                    <div>
+                        <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Daily Nutrition</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Calories - Orange Theme -->
+                            <div class="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl p-4 border border-orange-200/50">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs font-semibold text-orange-900">Calories</span>
+                                </div>
+                                <div class="text-2xl font-bold text-orange-900">{{ activeGoal.daily_goal_calories }}</div>
+                                <div class="text-xs text-orange-700 mt-0.5">kcal/day</div>
+                            </div>
+
+                            <!-- Protein - Blue Theme -->
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-4 border border-blue-200/50">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs font-semibold text-blue-900">Protein</span>
+                                </div>
+                                <div class="text-2xl font-bold text-blue-900">{{ activeGoal.daily_goal_protein }}<span class="text-lg">g</span></div>
+                                <div class="text-xs text-blue-700 mt-0.5">per day</div>
+                            </div>
+
+                            <!-- Carbs - Green Theme -->
+                            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-xl p-4 border border-emerald-200/50">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs font-semibold text-emerald-900">Carbs</span>
+                                </div>
+                                <div class="text-2xl font-bold text-emerald-900">{{ activeGoal.daily_goal_carb }}<span class="text-lg">g</span></div>
+                                <div class="text-xs text-emerald-700 mt-0.5">per day</div>
+                            </div>
+
+                            <!-- Fat - Purple Theme -->
+                            <div class="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-4 border border-purple-200/50">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs font-semibold text-purple-900">Fat</span>
+                                </div>
+                                <div class="text-2xl font-bold text-purple-900">{{ activeGoal.daily_goal_fat }}<span class="text-lg">g</span></div>
+                                <div class="text-xs text-purple-700 mt-0.5">per day</div>
+                            </div>
                         </div>
                     </div>
                 </div>
