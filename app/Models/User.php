@@ -79,4 +79,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Goal::class);
     }
+
+    /**
+     * Get the meal entries for the user.
+     */
+    public function mealEntries(): HasMany
+    {
+        return $this->hasMany(MealEntry::class);
+    }
 }

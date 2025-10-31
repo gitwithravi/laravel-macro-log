@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\MealEntryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,9 +20,10 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    // Dashboard & Meal Logging Routes
+    Route::get('/dashboard', [MealEntryController::class, 'dashboard'])->name('dashboard');
+    Route::post('/meals', [MealEntryController::class, 'store'])->name('meals.store');
+    Route::delete('/meals/{mealEntry}', [MealEntryController::class, 'destroy'])->name('meals.destroy');
 
     // Goal Management Routes
     Route::resource('goals', GoalController::class)->except(['create', 'show', 'edit']);
