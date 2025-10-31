@@ -15,41 +15,34 @@ defineProps({
 
 <template>
     <AppLayout title="Profile">
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Profile
-            </h2>
-        </template>
+        <div class="min-h-screen bg-gray-50 pb-20">
+            <!-- Header -->
+            <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+                <div class="max-w-2xl mx-auto px-4 py-4">
+                    <h1 class="text-2xl font-bold text-gray-900">Profile Settings</h1>
+                </div>
+            </div>
 
-        <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+            <!-- Content -->
+            <div class="max-w-2xl mx-auto px-4 py-6 space-y-4">
                 <div v-if="$page.props.jetstream.canUpdateProfileInformation">
                     <UpdateProfileInformationForm :user="$page.props.auth.user" />
-
-                    <SectionBorder />
                 </div>
 
                 <div v-if="$page.props.jetstream.canUpdatePassword">
-                    <UpdatePasswordForm class="mt-10 sm:mt-0" />
-
-                    <SectionBorder />
+                    <UpdatePasswordForm />
                 </div>
 
                 <div v-if="$page.props.jetstream.canManageTwoFactorAuthentication">
                     <TwoFactorAuthenticationForm
                         :requires-confirmation="confirmsTwoFactorAuthentication"
-                        class="mt-10 sm:mt-0"
                     />
-
-                    <SectionBorder />
                 </div>
 
-                <LogoutOtherBrowserSessionsForm :sessions="sessions" class="mt-10 sm:mt-0" />
+                <LogoutOtherBrowserSessionsForm :sessions="sessions" />
 
                 <template v-if="$page.props.jetstream.hasAccountDeletionFeatures">
-                    <SectionBorder />
-
-                    <DeleteUserForm class="mt-10 sm:mt-0" />
+                    <DeleteUserForm />
                 </template>
             </div>
         </div>
