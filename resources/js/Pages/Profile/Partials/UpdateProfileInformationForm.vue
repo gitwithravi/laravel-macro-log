@@ -17,6 +17,7 @@ const form = useForm({
     name: props.user.name,
     email: props.user.email,
     date_of_birth: props.user.date_of_birth,
+    gender: props.user.gender,
     open_api_key: props.user.open_api_key,
     photo: null,
 });
@@ -191,6 +192,23 @@ const clearPhotoFileInput = () => {
                         autocomplete="bday"
                     />
                     <InputError :message="form.errors.date_of_birth" class="mt-2" />
+                </div>
+
+                <!-- Gender -->
+                <div>
+                    <InputLabel for="gender" value="Gender" />
+                    <select
+                        id="gender"
+                        v-model="form.gender"
+                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    >
+                        <option :value="null">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                        <option value="prefer_not_to_say">Prefer not to say</option>
+                    </select>
+                    <InputError :message="form.errors.gender" class="mt-2" />
                 </div>
 
                 <!-- OpenAI API Key -->
