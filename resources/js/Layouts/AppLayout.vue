@@ -13,6 +13,7 @@ defineProps({
 });
 
 const showingNavigationDropdown = ref(false);
+const showingProfileMenu = ref(false);
 
 const switchToTeam = (team) => {
     router.put(route('current-team.update'), {
@@ -25,6 +26,14 @@ const switchToTeam = (team) => {
 const logout = () => {
     router.post(route('logout'));
 };
+
+const toggleProfileMenu = () => {
+    showingProfileMenu.value = !showingProfileMenu.value;
+};
+
+const closeProfileMenu = () => {
+    showingProfileMenu.value = false;
+};
 </script>
 
 <template>
@@ -34,7 +43,7 @@ const logout = () => {
         <Banner />
 
         <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
+            <nav class="hidden sm:block bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
@@ -162,8 +171,8 @@ const logout = () => {
                             </div>
                         </div>
 
-                        <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
+                        <!-- Hamburger - Hidden on mobile, using bottom nav instead -->
+                        <div class="-me-2 hidden items-center">
                             <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out" @click="showingNavigationDropdown = ! showingNavigationDropdown">
                                 <svg
                                     class="size-6"
@@ -191,91 +200,9 @@ const logout = () => {
                     </div>
                 </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('goals.index')" :active="route().current('goals.*')">
-                            Goals
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200">
-                        <div class="flex items-center px-4">
-                            <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
-                                <img class="size-10 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
-                            </div>
-
-                            <div>
-                                <div class="font-medium text-base text-gray-800">
-                                    {{ $page.props.auth.user.name }}
-                                </div>
-                                <div class="font-medium text-sm text-gray-500">
-                                    {{ $page.props.auth.user.email }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">
-                                Profile
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
-                                API Tokens
-                            </ResponsiveNavLink>
-
-                            <!-- Authentication -->
-                            <form method="POST" @submit.prevent="logout">
-                                <ResponsiveNavLink as="button">
-                                    Log Out
-                                </ResponsiveNavLink>
-                            </form>
-
-                            <!-- Team Management -->
-                            <template v-if="$page.props.jetstream.hasTeamFeatures">
-                                <div class="border-t border-gray-200" />
-
-                                <div class="block px-4 py-2 text-xs text-gray-400">
-                                    Manage Team
-                                </div>
-
-                                <!-- Team Settings -->
-                                <ResponsiveNavLink :href="route('teams.show', $page.props.auth.user.current_team)" :active="route().current('teams.show')">
-                                    Team Settings
-                                </ResponsiveNavLink>
-
-                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')" :active="route().current('teams.create')">
-                                    Create New Team
-                                </ResponsiveNavLink>
-
-                                <!-- Team Switcher -->
-                                <template v-if="$page.props.auth.user.all_teams.length > 1">
-                                    <div class="border-t border-gray-200" />
-
-                                    <div class="block px-4 py-2 text-xs text-gray-400">
-                                        Switch Teams
-                                    </div>
-
-                                    <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
-                                        <form @submit.prevent="switchToTeam(team)">
-                                            <ResponsiveNavLink as="button">
-                                                <div class="flex items-center">
-                                                    <svg v-if="team.id == $page.props.auth.user.current_team_id" class="me-2 size-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <div>{{ team.name }}</div>
-                                                </div>
-                                            </ResponsiveNavLink>
-                                        </form>
-                                    </template>
-                                </template>
-                            </template>
-                        </div>
-                    </div>
+                <!-- Responsive Navigation Menu - Hidden, using bottom nav instead -->
+                <div class="hidden">
+                    <!-- Removed responsive menu -->
                 </div>
             </nav>
 
@@ -287,9 +214,106 @@ const logout = () => {
             </header>
 
             <!-- Page Content -->
-            <main>
+            <main class="pb-20 sm:pb-0">
                 <slot />
             </main>
+        </div>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 sm:hidden z-50">
+            <div class="grid grid-cols-4 h-16">
+                <!-- Dashboard Tab -->
+                <Link
+                    :href="route('dashboard')"
+                    class="flex flex-col items-center justify-center"
+                    :class="route().current('dashboard') ? 'text-indigo-600' : 'text-gray-600'"
+                >
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg>
+                    <span class="text-xs mt-1">Dashboard</span>
+                </Link>
+
+                <!-- Goals Tab -->
+                <Link
+                    :href="route('goals.index')"
+                    class="flex flex-col items-center justify-center"
+                    :class="route().current('goals.*') ? 'text-indigo-600' : 'text-gray-600'"
+                >
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                    </svg>
+                    <span class="text-xs mt-1">Goals</span>
+                </Link>
+
+                <!-- History Tab (Inactive) -->
+                <button
+                    class="flex flex-col items-center justify-center text-gray-400 cursor-not-allowed"
+                    disabled
+                >
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-xs mt-1">History</span>
+                </button>
+
+                <!-- Profile Tab -->
+                <button
+                    @click="toggleProfileMenu"
+                    class="flex flex-col items-center justify-center"
+                    :class="showingProfileMenu ? 'text-indigo-600' : 'text-gray-600'"
+                >
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <span class="text-xs mt-1">Profile</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Profile Menu Modal -->
+        <div
+            v-if="showingProfileMenu"
+            class="fixed inset-0 z-50 sm:hidden"
+            @click="closeProfileMenu"
+        >
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+            <!-- Menu -->
+            <div class="absolute bottom-16 left-0 right-0 bg-white rounded-t-lg shadow-lg" @click.stop>
+                <div class="px-4 py-3 border-b border-gray-200">
+                    <div class="font-medium text-base text-gray-800">
+                        {{ $page.props.auth.user.name }}
+                    </div>
+                    <div class="font-medium text-sm text-gray-500">
+                        {{ $page.props.auth.user.email }}
+                    </div>
+                </div>
+                <div class="py-2">
+                    <Link
+                        :href="route('profile.show')"
+                        class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50"
+                        @click="closeProfileMenu"
+                    >
+                        <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                        Profile
+                    </Link>
+                    <form @submit.prevent="logout">
+                        <button
+                            type="submit"
+                            class="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gray-50"
+                        >
+                            <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                            </svg>
+                            Log Out
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </template>
