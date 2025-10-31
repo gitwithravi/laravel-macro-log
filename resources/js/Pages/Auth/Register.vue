@@ -11,6 +11,8 @@ import TextInput from '@/Components/TextInput.vue';
 const form = useForm({
     name: '',
     email: '',
+    date_of_birth: '',
+    gender: '',
     password: '',
     password_confirmation: '',
     terms: false,
@@ -57,6 +59,36 @@ const submit = () => {
                     autocomplete="username"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="date_of_birth" value="Date of Birth" />
+                <TextInput
+                    id="date_of_birth"
+                    v-model="form.date_of_birth"
+                    type="date"
+                    class="mt-1 block w-full"
+                    required
+                    autocomplete="bday"
+                />
+                <InputError class="mt-2" :message="form.errors.date_of_birth" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="gender" value="Gender" />
+                <select
+                    id="gender"
+                    v-model="form.gender"
+                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    required
+                >
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer_not_to_say">Prefer not to say</option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.gender" />
             </div>
 
             <div class="mt-4">
