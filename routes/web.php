@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GoalController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,4 +22,8 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    // Goal Management Routes
+    Route::resource('goals', GoalController::class)->except(['create', 'show', 'edit']);
+    Route::post('/goals/{goal}/toggle-active', [GoalController::class, 'toggleActive'])->name('goals.toggle-active');
 });
