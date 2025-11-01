@@ -44,6 +44,66 @@ class MealEntryController extends Controller
     }
 
     /**
+     * Display meal history for the last 7 days.
+     */
+    public function history(): Response
+    {
+        $user = auth()->user();
+        $endDate = now();
+        $startDate = now()->subDays(6); // Last 7 days including today
+
+        // Get all meal entries for the last 7 days
+        $meals = $user->mealEntries()
+            ->whereBetween('logged_date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->orderBy('logged_date', 'desc')
+            ->orderBy('logged_time', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Group meals by date and calculate daily totals
+        $historyData = [];
+        foreach ($meals as $meal) {
+            $date = $meal->logged_date->toDateString();
+
+            if (!isset($historyData[$date])) {
+                $historyData[$date] = [
+                    'meals' => [],
+                    'totals' => [
+                        'calories' => 0,
+                        'protein' => 0,
+                        'carbs' => 0,
+                        'fat' => 0,
+                    ],
+                    'date' => $meal->logged_date,
+                ];
+            }
+
+            $historyData[$date]['meals'][] = $meal;
+            $historyData[$date]['totals']['calories'] += $meal->calories;
+            $historyData[$date]['totals']['protein'] += $meal->protein;
+            $historyData[$date]['totals']['carbs'] += $meal->carbs;
+            $historyData[$date]['totals']['fat'] += $meal->fat;
+        }
+
+        // Round totals to 2 decimal places
+        foreach ($historyData as $date => &$data) {
+            $data['totals']['protein'] = round($data['totals']['protein'], 2);
+            $data['totals']['carbs'] = round($data['totals']['carbs'], 2);
+            $data['totals']['fat'] = round($data['totals']['fat'], 2);
+        }
+
+        // Get active goal
+        $activeGoal = $user->goals()->where('is_active', true)->first();
+
+        return Inertia::render('History', [
+            'historyData' => $historyData,
+            'activeGoal' => $activeGoal,
+            'startDate' => $startDate->toDateString(),
+            'endDate' => $endDate->toDateString(),
+        ]);
+    }
+
+    /**
      * Store a newly created meal entry.
      */
     public function store(Request $request)

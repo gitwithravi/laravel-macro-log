@@ -60,6 +60,9 @@ const closeProfileMenu = () => {
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
+                                <NavLink :href="route('history')" :active="route().current('history')">
+                                    History
+                                </NavLink>
                                 <NavLink :href="route('goals.index')" :active="route().current('goals.*')">
                                     Goals
                                 </NavLink>
@@ -246,16 +249,17 @@ const closeProfileMenu = () => {
                     <span class="text-xs mt-1">Goals</span>
                 </Link>
 
-                <!-- History Tab (Inactive) -->
-                <button
-                    class="flex flex-col items-center justify-center text-gray-400 cursor-not-allowed"
-                    disabled
+                <!-- History Tab -->
+                <Link
+                    :href="route('history')"
+                    class="flex flex-col items-center justify-center"
+                    :class="route().current('history') ? 'text-indigo-600' : 'text-gray-600'"
                 >
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span class="text-xs mt-1">History</span>
-                </button>
+                </Link>
 
                 <!-- Profile Tab -->
                 <button

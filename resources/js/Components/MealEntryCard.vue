@@ -7,6 +7,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    readonly: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const showDeleteConfirm = ref(false);
@@ -46,6 +50,7 @@ const formatTime = (timeString) => {
                 </p>
             </div>
             <button
+                v-if="!readonly"
                 @click="showDeleteConfirm = true"
                 class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                 aria-label="Delete meal"

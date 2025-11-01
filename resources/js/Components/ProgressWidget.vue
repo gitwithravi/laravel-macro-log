@@ -30,15 +30,19 @@ const props = defineProps({
 });
 
 const percentage = computed(() => {
-    if (!props.goal) return 0;
-    return Math.min(Math.round((props.consumed / props.goal) * 100), 100);
+    if (!props.goal || props.goal === 0) return 0;
+    const value = Math.min((props.consumed / props.goal) * 100, 100);
+    return parseFloat(value.toFixed(2));
 });
 
 const remaining = computed(() => {
-    return Math.max(props.goal - props.consumed, 0);
+    if (!props.goal || props.goal === 0) return 0;
+    const value = Math.max(props.goal - props.consumed, 0);
+    return parseFloat(value.toFixed(2));
 });
 
 const progressColor = computed(() => {
+    if (!props.goal || props.goal === 0) return 'bg-gray-400';
     const p = (props.consumed / props.goal) * 100;
     if (p < 90) return 'bg-emerald-500';
     if (p <= 100) return 'bg-yellow-500';

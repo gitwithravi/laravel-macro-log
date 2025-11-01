@@ -22,6 +22,7 @@ Route::middleware([
 ])->group(function () {
     // Dashboard & Meal Logging Routes
     Route::get('/dashboard', [MealEntryController::class, 'dashboard'])->name('dashboard');
+    Route::get('/history', [MealEntryController::class, 'history'])->name('history');
     Route::post('/meals', [MealEntryController::class, 'store'])->name('meals.store');
     Route::delete('/meals/{mealEntry}', [MealEntryController::class, 'destroy'])->name('meals.destroy');
 
