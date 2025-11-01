@@ -96,10 +96,10 @@ const colorClasses = computed(() => {
         </div>
 
         <!-- Progress Value -->
-        <div :class="['text-2xl font-bold mb-1', colorClasses.text]">
+        <div :class="['text-lg font-bold mb-1', colorClasses.text]">
             {{ consumed }}
-            <span class="text-lg font-normal">/{{ goal }}</span>
-            <span class="text-base font-medium ml-1">{{ unit }}</span>
+            <span class="text-base font-normal">/{{ goal }}</span>
+            <span class="text-sm font-medium ml-1">{{ unit }}</span>
         </div>
 
         <!-- Progress Bar -->
