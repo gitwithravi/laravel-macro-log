@@ -1,6 +1,7 @@
 <script setup>
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import InsightModal from './InsightModal.vue';
 
 const props = defineProps({
     meal: {
@@ -14,6 +15,10 @@ const props = defineProps({
 });
 
 const showDeleteConfirm = ref(false);
+const showInsightModal = ref(false);
+const insightText = ref(null);
+const insightLoading = ref(false);
+const insightError = ref(null);
 
 const deleteMeal = () => {
     router.delete(route('meals.destroy', props.meal.id), {
@@ -37,6 +42,39 @@ const formatTime = (timeString) => {
         return timeString;
     }
 };
+
+const fetchInsight = async () => {
+    showInsightModal.value = true;
+    insightLoading.value = true;
+    insightError.value = null;
+    insightText.value = null;
+
+    try {
+        const response = await fetch(route('meals.insight', props.meal.id), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to fetch insight');
+        }
+
+        insightText.value = data.insight;
+    } catch (error) {
+        insightError.value = error.message;
+    } finally {
+        insightLoading.value = false;
+    }
+};
+
+const closeInsightModal = () => {
+    showInsightModal.value = false;
+};
 </script>
 
 <template>
@@ -49,16 +87,31 @@ const formatTime = (timeString) => {
                     {{ formatTime(meal.logged_time) }}
                 </p>
             </div>
-            <button
-                v-if="!readonly"
-                @click="showDeleteConfirm = true"
-                class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                aria-label="Delete meal"
-            >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </button>
+            <div class="flex items-center gap-1">
+                <!-- Insight Button -->
+                <button
+                    @click="fetchInsight"
+                    class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                    aria-label="View meal insight"
+                    title="View AI insight"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                </button>
+
+                <!-- Delete Button -->
+                <button
+                    v-if="!readonly"
+                    @click="showDeleteConfirm = true"
+                    class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    aria-label="Delete meal"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- Nutrition Grid -->
@@ -117,5 +170,15 @@ const formatTime = (timeString) => {
                 </div>
             </div>
         </teleport>
+
+        <!-- Insight Modal -->
+        <InsightModal
+            :show="showInsightModal"
+            :meal-name="meal.meal_name"
+            :insight="insightText"
+            :loading="insightLoading"
+            :error="insightError"
+            @close="closeInsightModal"
+        />
     </div>
 </template>

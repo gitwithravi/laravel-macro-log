@@ -169,6 +169,67 @@ class MealEntryController extends Controller
     }
 
     /**
+     * Get or generate insight for a meal entry.
+     */
+    public function getInsight(MealEntry $mealEntry)
+    {
+        // Ensure the meal belongs to the authenticated user
+        if ($mealEntry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Check if insight already exists
+        $existingInsight = $mealEntry->insight;
+
+        if ($existingInsight) {
+            return response()->json([
+                'insight' => $existingInsight->insight,
+                'cached' => true,
+            ]);
+        }
+
+        // Generate new insight using OpenAI
+        $user = auth()->user();
+
+        // Check if user has OpenAI API key configured
+        if (empty($user->open_api_key)) {
+            return response()->json([
+                'error' => 'OpenAI API key not configured. Please add your API key in profile settings.'
+            ], 400);
+        }
+
+        try {
+            // Get user's active goal for context
+            $activeGoal = $user->goals()->where('is_active', true)->first();
+
+            // Generate insight
+            $insightText = $this->generateMealInsight(
+                $user->open_api_key,
+                $mealEntry,
+                $activeGoal
+            );
+
+            // Store insight in database
+            $insight = $mealEntry->insight()->create([
+                'insight' => $insightText,
+            ]);
+
+            return response()->json([
+                'insight' => $insightText,
+                'cached' => false,
+            ]);
+        } catch (\OpenAI\Exceptions\ErrorException $e) {
+            return response()->json([
+                'error' => 'OpenAI API error: ' . $e->getMessage()
+            ], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to generate insight: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Parse meal using OpenAI API.
      */
     private function parseMealWithOpenAI(string $apiKey, string $mealInput): array
@@ -230,5 +291,59 @@ class MealEntryController extends Controller
             'carbs' => round((float) $nutrition['carbs'], 2),
             'fat' => round((float) $nutrition['fat'], 2),
         ];
+    }
+
+    /**
+     * Generate meal insight using OpenAI API.
+     */
+    private function generateMealInsight(string $apiKey, MealEntry $mealEntry, $activeGoal = null): string
+    {
+        $client = \OpenAI::client($apiKey);
+
+        // Build context about the meal
+        $mealContext = "Meal: {$mealEntry->meal_name}\n";
+        $mealContext .= "Calories: {$mealEntry->calories}\n";
+        $mealContext .= "Protein: {$mealEntry->protein}g\n";
+        $mealContext .= "Carbs: {$mealEntry->carbs}g\n";
+        $mealContext .= "Fat: {$mealEntry->fat}g\n";
+
+        // Add goal context if available
+        $goalContext = '';
+        if ($activeGoal) {
+            $goalContext = "\n\nUser's Daily Goals:\n";
+            $goalContext .= "Calories: {$activeGoal->daily_goal_calories}\n";
+            $goalContext .= "Protein: {$activeGoal->daily_goal_protein}g\n";
+            $goalContext .= "Carbs: {$activeGoal->daily_goal_carb}g\n";
+            $goalContext .= "Fat: {$activeGoal->daily_goal_fat}g\n";
+        }
+
+        $systemPrompt = "You are a nutrition and health expert. Analyze meals and provide constructive, actionable insights. Be concise, friendly, and encouraging. Focus on whether the meal aligns with the user's goals and suggest practical improvements.";
+
+        $userPrompt = "{$mealContext}{$goalContext}\n\nProvide a brief insight (2-3 sentences) about this meal. Include:\n1. Whether it aligns with the goals (if goals are provided)\n2. What's good about this meal\n3. One practical improvement or tip if applicable\n\nKeep it positive and actionable.";
+
+        $response = $client->chat()->create([
+            'model' => 'gpt-4o-mini',
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => $systemPrompt
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $userPrompt
+                ]
+            ],
+            'temperature' => 0.7,
+            'max_tokens' => 150,
+        ]);
+
+        // Extract content from response
+        $content = $response['choices'][0]['message']['content'] ?? null;
+
+        if (!$content) {
+            throw new \Exception('Empty response from OpenAI');
+        }
+
+        return trim($content);
     }
 }

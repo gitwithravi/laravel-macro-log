@@ -25,6 +25,7 @@ Route::middleware([
     Route::get('/history', [MealEntryController::class, 'history'])->name('history');
     Route::post('/meals', [MealEntryController::class, 'store'])->name('meals.store');
     Route::delete('/meals/{mealEntry}', [MealEntryController::class, 'destroy'])->name('meals.destroy');
+    Route::get('/meals/{mealEntry}/insight', [MealEntryController::class, 'getInsight'])->name('meals.insight');
 
     // Goal Management Routes
     Route::resource('goals', GoalController::class)->except(['create', 'show', 'edit']);
