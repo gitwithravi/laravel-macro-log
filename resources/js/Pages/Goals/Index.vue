@@ -184,7 +184,7 @@ const weightDifference = (goal) => {
         <div class="min-h-screen bg-gray-50 pb-20">
             <!-- Header -->
             <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-                <div class="max-w-2xl mx-auto px-4 py-4">
+                <div class="max-w-4xl mx-auto px-4 py-4">
                     <div class="flex items-center justify-between">
                         <h1 class="text-2xl font-bold text-gray-900">My Goals</h1>
                         <PrimaryButton @click="openCreateModal" class="text-sm">
@@ -198,7 +198,7 @@ const weightDifference = (goal) => {
             </div>
 
             <!-- Content -->
-            <div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+            <div class="max-w-4xl mx-auto px-4 py-6 space-y-6">
                 <!-- Active Goal -->
                 <div v-if="activeGoal" class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
                     <!-- Header -->

@@ -88,7 +88,7 @@ const icons = {
         </div>
 
         <!-- Progress Widgets Grid (Collapsed View) -->
-        <div v-if="hasGoal" class="grid grid-cols-2 gap-3 mb-4">
+        <div v-if="hasGoal" class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
             <ProgressWidget
                 label="Calories"
                 :consumed="dayData.totals.calories"

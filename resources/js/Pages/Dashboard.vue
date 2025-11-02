@@ -47,7 +47,7 @@ const formatDate = (dateString) => {
         <div class="min-h-screen bg-gray-50 pb-24">
             <!-- Header -->
             <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-                <div class="max-w-2xl mx-auto px-4 py-4">
+                <div class="max-w-4xl mx-auto px-4 py-4">
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
@@ -66,7 +66,7 @@ const formatDate = (dateString) => {
             </div>
 
             <!-- Content -->
-            <div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+            <div class="max-w-4xl mx-auto px-4 py-6 space-y-6">
                 <!-- Today's Summary -->
                 <TodaySummary
                     :totals="todayTotals"
@@ -102,7 +102,7 @@ const formatDate = (dateString) => {
                     </div>
 
                     <!-- Meals List -->
-                    <div v-else class="space-y-3">
+                    <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <MealEntryCard
                             v-for="meal in todayMeals"
                             :key="meal.id"

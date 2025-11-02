@@ -62,7 +62,7 @@ const isYesterday = (dateString) => {
         <div class="min-h-screen bg-gray-50 pb-24">
             <!-- Header -->
             <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-                <div class="max-w-2xl mx-auto px-4 py-4">
+                <div class="max-w-4xl mx-auto px-4 py-4">
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">Meal History</h1>
@@ -78,7 +78,7 @@ const isYesterday = (dateString) => {
             </div>
 
             <!-- Content -->
-            <div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+            <div class="max-w-4xl mx-auto px-4 py-6 space-y-6">
                 <!-- Empty State -->
                 <div v-if="!hasData" class="bg-white rounded-2xl border border-gray-200 p-12 text-center">
                     <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -91,20 +91,22 @@ const isYesterday = (dateString) => {
                 </div>
 
                 <!-- History List -->
-                <div v-else class="space-y-4">
-                    <div class="flex items-center justify-between mb-2">
+                <div v-else>
+                    <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-bold text-gray-900">Last 7 Days</h2>
                         <span class="text-sm text-gray-500">{{ historyDays.length }} {{ historyDays.length === 1 ? 'day' : 'days' }}</span>
                     </div>
 
-                    <DayHistoryCard
-                        v-for="day in historyDays"
-                        :key="day.date"
-                        :day-data="day"
-                        :active-goal="activeGoal"
-                        :is-today="isToday(day.date)"
-                        :is-yesterday="isYesterday(day.date)"
-                    />
+                    <div class="space-y-4">
+                        <DayHistoryCard
+                            v-for="day in historyDays"
+                            :key="day.date"
+                            :day-data="day"
+                            :active-goal="activeGoal"
+                            :is-today="isToday(day.date)"
+                            :is-yesterday="isYesterday(day.date)"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
