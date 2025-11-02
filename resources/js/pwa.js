@@ -1,33 +1,7 @@
-// Only load PWA register in production or when explicitly enabled
-if (import.meta.env.PROD || import.meta.env.VITE_PWA_DEV === 'true') {
-    // Dynamically import to avoid errors when module doesn't exist
-    import('virtual:pwa-register')
-        .then(({ registerSW }) => {
-            if ('serviceWorker' in navigator) {
-                const updateSW = registerSW({
-                    immediate: true,
-                    onNeedRefresh() {
-                        // Dispatch custom event for update prompt component
-                        window.dispatchEvent(new CustomEvent('swUpdateAvailable', {
-                            detail: updateSW
-                        }));
-                    },
-                    onOfflineReady() {
-                        console.log('App ready to work offline');
-                    },
-                    onRegistered(registration) {
-                        console.log('Service Worker registered:', registration);
-                    },
-                    onRegisterError(error) {
-                        console.error('Service Worker registration failed:', error);
-                    }
-                });
-            }
-        })
-        .catch((error) => {
-            console.log('PWA not available in development mode:', error.message);
-        });
-}
+// PWA Service Worker is registered in app.blade.php
+// This file contains additional PWA-related functionality
+
+console.log('PWA module loaded');
 
 // Handle online/offline status
 window.addEventListener('online', () => {
