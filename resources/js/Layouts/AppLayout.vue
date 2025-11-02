@@ -7,6 +7,9 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import PWAUpdatePrompt from '@/Components/PWAUpdatePrompt.vue';
+import InstallPrompt from '@/Components/InstallPrompt.vue';
+import OfflineIndicator from '@/Components/OfflineIndicator.vue';
 
 defineProps({
     title: String,
@@ -41,6 +44,11 @@ const closeProfileMenu = () => {
         <Head :title="title" />
 
         <Banner />
+
+        <!-- PWA Components -->
+        <OfflineIndicator />
+        <PWAUpdatePrompt />
+        <InstallPrompt />
 
         <div class="min-h-screen bg-gray-100">
             <nav class="hidden sm:block bg-white border-b border-gray-100">

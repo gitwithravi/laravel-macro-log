@@ -24,6 +24,16 @@ const form = useForm({
 const isLoading = ref(false);
 const error = ref('');
 const textareaRef = ref(null);
+const isOffline = ref(!navigator.onLine);
+
+// Listen for online/offline events
+document.addEventListener('app:online', () => {
+    isOffline.value = false;
+});
+
+document.addEventListener('app:offline', () => {
+    isOffline.value = true;
+});
 
 // Auto-focus textarea when modal opens
 watch(() => props.show, (newValue) => {
@@ -31,6 +41,7 @@ watch(() => props.show, (newValue) => {
         form.reset();
         form.clearErrors();
         error.value = '';
+        isOffline.value = !navigator.onLine;
         setTimeout(() => {
             textareaRef.value?.focus();
         }, 100);
@@ -40,6 +51,12 @@ watch(() => props.show, (newValue) => {
 const submitMeal = async () => {
     if (!form.raw_input.trim()) {
         error.value = 'Please describe what you ate';
+        return;
+    }
+
+    // Check if offline
+    if (isOffline.value) {
+        error.value = 'Meal logging requires internet connection for AI processing. Please connect to the internet and try again.';
         return;
     }
 
@@ -105,6 +122,16 @@ const closeModal = () => {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
+                    </div>
+
+                    <!-- Offline Warning Banner -->
+                    <div v-if="isOffline" class="px-6 py-3 bg-orange-50 border-b border-orange-200">
+                        <div class="flex items-center gap-2 text-orange-700">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="text-sm font-medium">You're offline. Meal logging requires internet connection.</span>
+                        </div>
                     </div>
 
                     <!-- Body -->
