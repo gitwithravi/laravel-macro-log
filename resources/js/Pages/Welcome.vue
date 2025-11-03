@@ -157,9 +157,12 @@ onMounted(() => {
                     </div>
 
                     <!-- Navigation Links - Hidden on mobile, shown on desktop -->
-                    <div class="hidden md:flex items-center space-x-6">
+                    <div class="hidden lg:flex items-center space-x-6">
                         <a href="#features" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
                             Features
+                        </a>
+                        <a href="#screenshots" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+                            Screenshots
                         </a>
                         <a href="#how-it-works" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
                             How It Works
@@ -414,6 +417,140 @@ onMounted(() => {
                             Skip the app stores entirely—simply add to your home screen for instant access. Works like a native app without taking up storage space.
                         </p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screenshots Section -->
+        <section id="screenshots" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50 overflow-hidden scroll-mt-16">
+            <div class="max-w-7xl mx-auto">
+                <!-- Section Header -->
+                <div class="text-center mb-16 scroll-animate">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                        See MacroLog in Action
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Experience the sleek, intuitive interface designed for effortless nutrition tracking on any device
+                    </p>
+                </div>
+
+                <!-- Screenshots Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-8 items-start">
+                    <!-- Screenshot 1: Dashboard -->
+                    <div class="scroll-animate group">
+                        <div class="relative">
+                            <div class="relative mx-auto" style="max-width: 280px;">
+                                <img
+                                    src="/screens/dashboard.png"
+                                    alt="MacroLog Dashboard - Track your daily meals and nutrition goals"
+                                    class="w-full h-auto rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:-rotate-1"
+                                    loading="lazy"
+                                />
+
+                                <!-- Floating badge -->
+                                <div class="absolute -top-4 -right-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg transform rotate-12 group-hover:rotate-0 transition-transform duration-300">
+                                    Dashboard
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mt-8 text-center">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Smart Dashboard</h3>
+                            <p class="text-gray-600 text-sm">
+                                Track your daily progress with beautiful, color-coded macro displays
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Screenshot 2: History -->
+                    <div class="scroll-animate group" style="animation-delay: 0.15s;">
+                        <div class="relative">
+                            <div class="relative mx-auto" style="max-width: 280px;">
+                                <img
+                                    src="/screens/history.png"
+                                    alt="MacroLog History - View your 7-day meal history and trends"
+                                    class="w-full h-auto rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
+                                    loading="lazy"
+                                />
+
+                                <div class="absolute -top-4 -right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg transform rotate-12 group-hover:rotate-0 transition-transform duration-300">
+                                    History
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 text-center">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">7-Day History</h3>
+                            <p class="text-gray-600 text-sm">
+                                Review your meal history and nutrition trends over the past week
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Screenshot 3: Goal Settings -->
+                    <div class="scroll-animate group" style="animation-delay: 0.3s;">
+                        <div class="relative">
+                            <div class="relative mx-auto" style="max-width: 280px;">
+                                <img
+                                    src="/screens/goal-settings.png"
+                                    alt="MacroLog Goal Settings - Set personalized nutrition targets"
+                                    class="w-full h-auto rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:-rotate-1"
+                                    loading="lazy"
+                                />
+
+                                <div class="absolute -top-4 -right-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg transform rotate-12 group-hover:rotate-0 transition-transform duration-300">
+                                    Goals
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 text-center">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Custom Goals</h3>
+                            <p class="text-gray-600 text-sm">
+                                Set personalized targets based on your weight goals and activity
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Screenshot 4: Goal Dashboard -->
+                    <div class="scroll-animate group" style="animation-delay: 0.45s;">
+                        <div class="relative">
+                            <div class="relative mx-auto" style="max-width: 280px;">
+                                <img
+                                    src="/screens/goal-dashboard.png"
+                                    alt="MacroLog Goal Dashboard - Monitor your progress towards nutrition goals"
+                                    class="w-full h-auto rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
+                                    loading="lazy"
+                                />
+
+                                <div class="absolute -top-4 -right-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg transform rotate-12 group-hover:rotate-0 transition-transform duration-300">
+                                    Progress
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 text-center">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Goal Progress</h3>
+                            <p class="text-gray-600 text-sm">
+                                Monitor your progress and stay on track with visual goal tracking
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action under screenshots -->
+                <div class="mt-16 text-center scroll-animate">
+                    <p class="text-lg text-gray-700 mb-6">
+                        Ready to transform your nutrition tracking experience?
+                    </p>
+                    <Link
+                        v-if="canRegister"
+                        :href="route('register')"
+                        class="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-2xl hover:scale-105"
+                    >
+                        Get Started Free
+                    </Link>
                 </div>
             </div>
         </section>
