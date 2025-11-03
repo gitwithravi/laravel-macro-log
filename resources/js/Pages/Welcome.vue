@@ -136,7 +136,38 @@ onMounted(() => {
 </style>
 
 <template>
-    <Head title="MacroLog - Smart Nutrition Tracking" />
+    <Head title="MacroLog - Smart Nutrition Tracking Powered by AI">
+        <!-- Primary Meta Tags -->
+        <meta name="title" content="MacroLog - Smart Nutrition Tracking Powered by AI" />
+        <meta name="description" content="Track your meals effortlessly with AI-powered natural language input. No subscription fees—bring your own OpenAI API key. No app download needed, works offline as a PWA." />
+        <meta name="keywords" content="nutrition tracker, calorie tracker, macro tracking, AI nutrition, meal tracker, diet app, no subscription, PWA, progressive web app, OpenAI, natural language, food tracker" />
+        <meta name="author" content="MacroLog" />
+        <meta name="robots" content="index, follow" />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://macrolog.online/" />
+        <meta property="og:title" content="MacroLog - Smart Nutrition Tracking Powered by AI" />
+        <meta property="og:description" content="Track your meals effortlessly with AI-powered natural language input. No subscription fees—bring your own OpenAI API key. No app download needed." />
+        <meta property="og:image" content="https://macrolog.online/screens/dashboard.png" />
+        <meta property="og:site_name" content="MacroLog" />
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://macrolog.online/" />
+        <meta property="twitter:title" content="MacroLog - Smart Nutrition Tracking Powered by AI" />
+        <meta property="twitter:description" content="Track your meals effortlessly with AI-powered natural language input. No subscription fees—bring your own OpenAI API key." />
+        <meta property="twitter:image" content="https://macrolog.online/screens/dashboard.png" />
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://macrolog.online/" />
+
+        <!-- Additional Meta Tags -->
+        <meta name="theme-color" content="#4F46E5" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="MacroLog" />
+    </Head>
 
     <div class="min-h-screen bg-white overflow-x-hidden">
         <!-- Navigation Header -->
@@ -270,55 +301,43 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <!-- Hero Image/Mockup -->
-                    <div class="relative scroll-animate animate-float">
-                        <div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-500">
-                            <!-- Placeholder for dashboard screenshot -->
-                            <div class="w-full h-full flex items-center justify-center p-8">
-                                <div class="space-y-4 w-full">
-                                    <!-- Mock meal card -->
-                                    <div class="bg-white rounded-xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1">
-                                        <div class="flex items-center justify-between mb-3">
-                                            <h3 class="font-semibold text-gray-900">Breakfast</h3>
-                                            <span class="text-xs text-gray-500">8:30 AM</span>
-                                        </div>
-                                        <p class="text-sm text-gray-600 mb-3">Oatmeal with banana and almonds</p>
-                                        <div class="grid grid-cols-4 gap-2">
-                                            <div class="bg-orange-50 border border-orange-100 rounded-lg p-2 text-center">
-                                                <div class="text-xs text-orange-700 font-semibold">350</div>
-                                                <div class="text-xs text-orange-600">kcal</div>
-                                            </div>
-                                            <div class="bg-blue-50 border border-blue-100 rounded-lg p-2 text-center">
-                                                <div class="text-xs text-blue-700 font-semibold">12g</div>
-                                                <div class="text-xs text-blue-600">protein</div>
-                                            </div>
-                                            <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2 text-center">
-                                                <div class="text-xs text-emerald-700 font-semibold">58g</div>
-                                                <div class="text-xs text-emerald-600">carbs</div>
-                                            </div>
-                                            <div class="bg-purple-50 border border-purple-100 rounded-lg p-2 text-center">
-                                                <div class="text-xs text-purple-700 font-semibold">8g</div>
-                                                <div class="text-xs text-purple-600">fat</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Mock progress widget -->
-                                    <div class="bg-white rounded-xl p-4 shadow-lg">
-                                        <h3 class="font-semibold text-gray-900 mb-3">Today's Progress</h3>
-                                        <div class="space-y-2">
-                                            <div>
-                                                <div class="flex justify-between text-xs mb-1">
-                                                    <span class="text-orange-700">Calories</span>
-                                                    <span class="text-gray-600">350 / 2000</span>
-                                                </div>
-                                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 17.5%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <!-- Hero Images - Asymmetric Layout -->
+                    <div class="relative scroll-animate hidden lg:block">
+                        <div class="relative h-[550px] w-full max-w-[500px] mx-auto">
+                            <!-- Dashboard Screenshot - Larger, positioned left with slight rotation -->
+                            <div class="absolute top-0 left-0 z-10 transform hover:scale-105 transition-all duration-500 hover:z-20 -rotate-6 hover:rotate-0">
+                                <img
+                                    src="/screens/dashboard.png"
+                                    alt="MacroLog Dashboard"
+                                    class="w-[300px] rounded-2xl"
+                                    loading="eager"
+                                />
                             </div>
+
+                            <!-- History Screenshot - Overlapping bottom-right with counter rotation -->
+                            <div class="absolute top-24 right-0 z-20 transform hover:scale-105 transition-all duration-500 hover:z-30 rotate-6 hover:rotate-0">
+                                <img
+                                    src="/screens/history.png"
+                                    alt="MacroLog History"
+                                    class="w-[280px] rounded-2xl"
+                                    loading="eager"
+                                />
+                            </div>
+
+                            <!-- Decorative gradient blur - centered behind images -->
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse-slow -z-10"></div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile/Tablet Fallback - Single Image -->
+                    <div class="relative scroll-animate lg:hidden">
+                        <div class="relative mx-auto" style="max-width: 320px;">
+                            <img
+                                src="/screens/dashboard.png"
+                                alt="MacroLog Dashboard"
+                                class="w-full rounded-2xl transform hover:scale-105 transition-transform duration-500"
+                                loading="eager"
+                            />
                         </div>
                     </div>
                 </div>
@@ -443,7 +462,7 @@ onMounted(() => {
                                 <img
                                     src="/screens/dashboard.png"
                                     alt="MacroLog Dashboard - Track your daily meals and nutrition goals"
-                                    class="w-full h-auto rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:-rotate-1"
+                                    class="w-full h-auto rounded-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:-rotate-1"
                                     loading="lazy"
                                 />
 
@@ -470,7 +489,7 @@ onMounted(() => {
                                 <img
                                     src="/screens/history.png"
                                     alt="MacroLog History - View your 7-day meal history and trends"
-                                    class="w-full h-auto rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
+                                    class="w-full h-auto rounded-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
                                     loading="lazy"
                                 />
 
@@ -495,7 +514,7 @@ onMounted(() => {
                                 <img
                                     src="/screens/goal-settings.png"
                                     alt="MacroLog Goal Settings - Set personalized nutrition targets"
-                                    class="w-full h-auto rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:-rotate-1"
+                                    class="w-full h-auto rounded-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:-rotate-1"
                                     loading="lazy"
                                 />
 
@@ -520,7 +539,7 @@ onMounted(() => {
                                 <img
                                     src="/screens/goal-dashboard.png"
                                     alt="MacroLog Goal Dashboard - Monitor your progress towards nutrition goals"
-                                    class="w-full h-auto rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
+                                    class="w-full h-auto rounded-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-1"
                                     loading="lazy"
                                 />
 
@@ -551,6 +570,192 @@ onMounted(() => {
                     >
                         Get Started Free
                     </Link>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Section -->
+        <section id="comparison" class="py-20 px-4 sm:px-6 lg:px-8 bg-white scroll-mt-16">
+            <div class="max-w-7xl mx-auto">
+                <!-- Section Header -->
+                <div class="text-center mb-16 scroll-animate">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                        Why Choose MacroLog Over Traditional Apps?
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Break free from expensive subscriptions and hidden costs. MacroLog puts you in control.
+                    </p>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="max-w-5xl mx-auto scroll-animate">
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse bg-white rounded-2xl overflow-hidden shadow-lg">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                                    <th class="py-4 px-6 text-left font-semibold">Features</th>
+                                    <th class="py-4 px-6 text-center font-semibold">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <div class="w-6 h-6 bg-white rounded flex items-center justify-center">
+                                                <div class="w-4 h-4 bg-gradient-to-br from-indigo-600 to-purple-600 rounded"></div>
+                                            </div>
+                                            MacroLog
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-6 text-center font-semibold text-indigo-100">MyFitnessPal</th>
+                                    <th class="py-4 px-6 text-center font-semibold text-indigo-100">Cronometer</th>
+                                    <th class="py-4 px-6 text-center font-semibold text-indigo-100">Lose It!</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <!-- Row 1: Monthly Cost -->
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6 font-medium text-gray-900">Monthly Cost</td>
+                                    <td class="py-4 px-6 text-center">
+                                        <span class="inline-flex items-center gap-1 text-emerald-600 font-bold">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            $0
+                                        </span>
+                                        <div class="text-xs text-gray-500 mt-1">Pay only API costs</div>
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-gray-600">$19.99</td>
+                                    <td class="py-4 px-6 text-center text-gray-600">$9.99</td>
+                                    <td class="py-4 px-6 text-center text-gray-600">$39.99</td>
+                                </tr>
+
+                                <!-- Row 2: AI Meal Analysis -->
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6 font-medium text-gray-900">AI-Powered Meal Analysis</td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-emerald-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 3: Natural Language Input -->
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6 font-medium text-gray-900">Natural Language Input</td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-emerald-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <span class="text-yellow-600 text-sm">Limited</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 4: Your Data Control -->
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6 font-medium text-gray-900">Your Data, Your Control</td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-emerald-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 5: No App Download -->
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6 font-medium text-gray-900">No App Store Download</td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-emerald-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div class="text-xs text-gray-500 mt-1">PWA</div>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 6: Ads -->
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6 font-medium text-gray-900">Ad-Free Experience</td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-emerald-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <span class="text-red-600 text-sm">Has Ads</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-emerald-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <svg class="w-6 h-6 text-emerald-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Bottom note -->
+                    <div class="mt-8 text-center scroll-animate">
+                        <p class="text-sm text-gray-600">
+                            * Prices and features based on premium tier plans as of 2025. Actual costs may vary.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -662,6 +867,98 @@ onMounted(() => {
                     </h2>
                 </div>
 
+                <!-- Detailed Pricing Breakdown -->
+                <div class="max-w-4xl mx-auto mb-16">
+                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-8 md:p-12 scroll-animate border border-indigo-100">
+                        <div class="text-center mb-8">
+                            <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                                Simple, Transparent Pricing
+                            </h3>
+                            <p class="text-lg text-gray-600">
+                                MacroLog is free. You only pay for OpenAI API usage.
+                            </p>
+                        </div>
+
+                        <!-- Cost Breakdown -->
+                        <div class="grid md:grid-cols-2 gap-6 mb-8">
+                            <!-- MacroLog Cost -->
+                            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">MacroLog Platform</h4>
+                                        <p class="text-sm text-gray-600">Monthly Fee</p>
+                                    </div>
+                                </div>
+                                <div class="text-4xl font-bold text-emerald-600 mb-2">$0</div>
+                                <p class="text-sm text-gray-600">Completely free forever. No trials, no hidden fees.</p>
+                            </div>
+
+                            <!-- API Cost -->
+                            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">OpenAI API</h4>
+                                        <p class="text-sm text-gray-600">Usage-Based</p>
+                                    </div>
+                                </div>
+                                <div class="text-4xl font-bold text-indigo-600 mb-2">~$0.50</div>
+                                <p class="text-sm text-gray-600">Estimated cost per month for typical usage</p>
+                            </div>
+                        </div>
+
+                        <!-- Usage Examples -->
+                        <div class="bg-white rounded-2xl p-6">
+                            <h4 class="font-semibold text-gray-900 mb-4">What does $0.50/month get you?</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-gray-900 font-medium">~300-500 meal logs per month</p>
+                                        <p class="text-sm text-gray-600">Based on GPT-4o-mini pricing (~$0.15 per million input tokens)</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-gray-900 font-medium">Unlimited meal insights and AI recommendations</p>
+                                        <p class="text-sm text-gray-600">Get personalized feedback on every meal</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-gray-900 font-medium">Full access to all features</p>
+                                        <p class="text-sm text-gray-600">No premium tiers or paywalls</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison note -->
+                        <div class="mt-6 p-4 bg-indigo-100 rounded-xl">
+                            <p class="text-sm text-indigo-900 text-center">
+                                <strong>Compare:</strong> Traditional nutrition apps charge $10-$40/month for similar features. With MacroLog, you pay less than $1/month for AI-powered tracking.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Benefits Grid -->
                 <div class="grid md:grid-cols-3 gap-8">
                     <!-- Benefit 1 -->
@@ -771,6 +1068,100 @@ onMounted(() => {
             </div>
         </section>
 
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8 bg-white scroll-mt-16">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12 scroll-animate">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                        Get in Touch
+                    </h2>
+                    <p class="text-lg text-gray-600">
+                        Have questions? We're here to help!
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 scroll-animate">
+                    <!-- Contact Card -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 border border-indigo-100">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 text-lg">Email Support</h3>
+                                <p class="text-sm text-gray-600">We typically respond within 24 hours</p>
+                            </div>
+                        </div>
+                        <a
+                            href="mailto:care@macrolog.online"
+                            class="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
+                        >
+                            care@macrolog.online
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Quick Links Card -->
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 border border-gray-200">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 text-lg">Help & Resources</h3>
+                                <p class="text-sm text-gray-600">Find answers to common questions</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <a
+                                href="#faq"
+                                class="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-colors"
+                            >
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Frequently Asked Questions
+                            </a>
+                            <Link
+                                :href="route('terms.show')"
+                                class="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-colors"
+                            >
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Terms of Service
+                            </Link>
+                            <Link
+                                :href="route('policy.show')"
+                                class="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-colors"
+                            >
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Privacy Policy
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="mt-12 text-center scroll-animate">
+                    <div class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-50 rounded-full text-indigo-700">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm font-medium">Support available Monday-Friday, 9AM-5PM EST</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Final CTA Section -->
         <section class="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-600 to-purple-600 overflow-hidden animate-gradient">
             <!-- Animated background elements -->
@@ -812,24 +1203,119 @@ onMounted(() => {
         </section>
 
         <!-- Footer -->
-        <footer class="bg-gray-900 text-gray-400 py-12 px-4 sm:px-6 lg:px-8">
+        <footer class="bg-gray-900 text-gray-400 py-16 px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
-                <div class="grid md:grid-cols-3 gap-8 items-center">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg"></div>
-                        <span class="text-lg font-bold text-white">MacroLog</span>
+                <!-- Main Footer Content -->
+                <div class="grid md:grid-cols-4 gap-8 mb-12">
+                    <!-- Brand Column -->
+                    <div class="md:col-span-1">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg"></div>
+                            <span class="text-lg font-bold text-white">MacroLog</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-4">
+                            Smart nutrition tracking powered by AI. No subscriptions, complete control.
+                        </p>
+                        <a
+                            href="mailto:care@macrolog.online"
+                            class="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+                        >
+                            care@macrolog.online
+                        </a>
                     </div>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
-                        <Link :href="route('terms.show')" class="hover:text-white transition-colors">
-                            Terms of Service
-                        </Link>
-                        <span class="hidden sm:inline text-gray-600">•</span>
-                        <Link :href="route('policy.show')" class="hover:text-white transition-colors">
-                            Privacy Policy
-                        </Link>
+
+                    <!-- Product Column -->
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Product</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li>
+                                <a href="#features" class="hover:text-white transition-colors">Features</a>
+                            </li>
+                            <li>
+                                <a href="#screenshots" class="hover:text-white transition-colors">Screenshots</a>
+                            </li>
+                            <li>
+                                <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+                            </li>
+                            <li>
+                                <a href="#comparison" class="hover:text-white transition-colors">Compare</a>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="text-center md:text-right text-sm">
-                        <p>&copy; 2025 MacroLog. Built with Laravel & Vue.js.</p>
+
+                    <!-- Resources Column -->
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Resources</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li>
+                                <a href="#how-it-works" class="hover:text-white transition-colors">How It Works</a>
+                            </li>
+                            <li>
+                                <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+                            </li>
+                            <li>
+                                <Link :href="route('terms.show')" class="hover:text-white transition-colors">
+                                    Terms of Service
+                                </Link>
+                            </li>
+                            <li>
+                                <Link :href="route('policy.show')" class="hover:text-white transition-colors">
+                                    Privacy Policy
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Support Column -->
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Support</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li>
+                                <a href="#contact" class="hover:text-white transition-colors">Contact Us</a>
+                            </li>
+                            <li>
+                                <a href="#faq" class="hover:text-white transition-colors">Help Center</a>
+                            </li>
+                            <li>
+                                <Link v-if="canRegister" :href="route('register')" class="hover:text-white transition-colors">
+                                    Get Started
+                                </Link>
+                            </li>
+                            <li>
+                                <Link v-if="canLogin && !$page.props.auth.user" :href="route('login')" class="hover:text-white transition-colors">
+                                    Sign In
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar -->
+                <div class="pt-8 border-t border-gray-800">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="text-sm text-gray-500">
+                            &copy; 2025 MacroLog. All rights reserved. Built with Laravel & Vue.js.
+                        </div>
+                        <div class="flex items-center gap-6 text-sm">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-gray-500">No Subscription</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-gray-500">AI-Powered</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-gray-500">Privacy First</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
