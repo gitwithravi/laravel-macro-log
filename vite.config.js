@@ -4,6 +4,9 @@ import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+    build: {
+        outDir: 'public/build',
+    },
     plugins: [
         laravel({
             input: 'resources/js/app.js',
@@ -20,7 +23,10 @@ export default defineConfig({
         VitePWA({
             registerType: 'prompt',
             includeAssets: ['favicon.ico', 'icons/*.png'],
-
+            scope: '/',
+            base: '/',
+            outDir: 'public',
+            manifestFilename: 'manifest.webmanifest',
             manifest: {
                 name: 'Macro Log - Meal Tracker',
                 short_name: 'Macro Log',

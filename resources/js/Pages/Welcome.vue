@@ -13,6 +13,10 @@ defineProps({
 
 const isHeaderScrolled = ref(false);
 
+const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
 onMounted(() => {
     // Scroll animations
     const observer = new IntersectionObserver((entries) => {
@@ -145,11 +149,27 @@ onMounted(() => {
             <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <!-- Logo -->
-                    <div class="flex items-center space-x-2 group cursor-pointer">
+                    <div class="flex items-center space-x-2 group cursor-pointer" @click="scrollToTop">
                         <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg transform transition-transform group-hover:rotate-12 group-hover:scale-110 duration-300"></div>
                         <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                             MacroLog
                         </span>
+                    </div>
+
+                    <!-- Navigation Links - Hidden on mobile, shown on desktop -->
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="#features" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+                            Features
+                        </a>
+                        <a href="#how-it-works" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+                            How It Works
+                        </a>
+                        <a href="#pricing" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+                            Pricing
+                        </a>
+                        <a href="#faq" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+                            FAQ
+                        </a>
                     </div>
 
                     <!-- Auth Links -->
@@ -230,6 +250,12 @@ onMounted(() => {
                                 <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
+                                No app download needed
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
                                 No subscription required
                             </div>
                             <div class="flex items-center gap-2">
@@ -237,12 +263,6 @@ onMounted(() => {
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
                                 Your data, your control
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                AI-powered insights
                             </div>
                         </div>
                     </div>
@@ -303,7 +323,7 @@ onMounted(() => {
         </section>
 
         <!-- Features Section -->
-        <section class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-white scroll-mt-16">
             <div class="max-w-7xl mx-auto">
                 <!-- Section Header -->
                 <div class="text-center mb-16 scroll-animate">
@@ -389,9 +409,9 @@ onMounted(() => {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">Works Offline</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">No App Download Required</h3>
                         <p class="text-gray-600">
-                            Progressive Web App that works offline and can be installed on any device.
+                            Skip the app stores entirely—simply add to your home screen for instant access. Works like a native app without taking up storage space.
                         </p>
                     </div>
                 </div>
@@ -399,7 +419,7 @@ onMounted(() => {
         </section>
 
         <!-- How It Works Section -->
-        <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <section id="how-it-works" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 scroll-mt-16">
             <div class="max-w-7xl mx-auto">
                 <!-- Section Header -->
                 <div class="text-center mb-16 scroll-animate">
@@ -496,7 +516,7 @@ onMounted(() => {
         </section>
 
         <!-- Benefits/Social Proof Section -->
-        <section class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <section id="pricing" class="py-20 px-4 sm:px-6 lg:px-8 bg-white scroll-mt-16">
             <div class="max-w-7xl mx-auto">
                 <!-- Section Header -->
                 <div class="text-center mb-16 scroll-animate">
@@ -550,7 +570,7 @@ onMounted(() => {
         </section>
 
         <!-- FAQ Section -->
-        <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <section id="faq" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 scroll-mt-16">
             <div class="max-w-4xl mx-auto">
                 <!-- Section Header -->
                 <div class="text-center mb-16 scroll-animate">
@@ -604,10 +624,10 @@ onMounted(() => {
                     <!-- FAQ 5 -->
                     <div class="scroll-animate bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-transparent hover:border-indigo-200" style="animation-delay: 0.4s;">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                            Can I use MacroLog offline?
+                            Do I need to download an app from the App Store or Play Store?
                         </h3>
                         <p class="text-gray-600">
-                            Yes! MacroLog is a Progressive Web App (PWA) that can be installed on any device and works offline. You can view your history and previously logged meals without an internet connection. New meal logging and AI insights require an internet connection.
+                            No! MacroLog is a Progressive Web App (PWA)—simply visit the website and add it to your home screen for instant access. No app store downloads, no installation hassles, and no extra storage space required. It works just like a native app on any device, and you can even use it offline to view your history and previously logged meals.
                         </p>
                     </div>
                 </div>
@@ -657,10 +677,19 @@ onMounted(() => {
         <!-- Footer -->
         <footer class="bg-gray-900 text-gray-400 py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
-                <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="grid md:grid-cols-3 gap-8 items-center">
                     <div class="flex items-center space-x-2">
                         <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg"></div>
                         <span class="text-lg font-bold text-white">MacroLog</span>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+                        <Link :href="route('terms.show')" class="hover:text-white transition-colors">
+                            Terms of Service
+                        </Link>
+                        <span class="hidden sm:inline text-gray-600">•</span>
+                        <Link :href="route('policy.show')" class="hover:text-white transition-colors">
+                            Privacy Policy
+                        </Link>
                     </div>
                     <div class="text-center md:text-right text-sm">
                         <p>&copy; 2025 MacroLog. Built with Laravel & Vue.js.</p>
