@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
 
 defineProps({
     canLogin: {
@@ -9,19 +10,143 @@ defineProps({
         type: Boolean,
     },
 });
+
+const isHeaderScrolled = ref(false);
+
+onMounted(() => {
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-fade-in-up');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+        isHeaderScrolled.value = window.scrollY > 20;
+    });
+
+    // Smooth scroll for anchor links
+    document.documentElement.style.scrollBehavior = 'smooth';
+});
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes pulse-slow {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.scroll-animate {
+    opacity: 0;
+}
+
+.group:hover .group-hover-scale {
+    transform: scale(1.05);
+}
+
+.group:hover .group-hover-rotate {
+    transform: rotate(5deg);
+}
+</style>
 
 <template>
     <Head title="MacroLog - Smart Nutrition Tracking" />
 
-    <div class="min-h-screen bg-white">
+    <div class="min-h-screen bg-white overflow-x-hidden">
         <!-- Navigation Header -->
-        <header class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
+        <header
+            :class="[
+                'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+                isHeaderScrolled ? 'bg-white shadow-lg' : 'bg-white/80 backdrop-blur-md border-b border-gray-100'
+            ]"
+        >
             <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <!-- Logo -->
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg"></div>
+                    <div class="flex items-center space-x-2 group cursor-pointer">
+                        <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg transform transition-transform group-hover:rotate-12 group-hover:scale-110 duration-300"></div>
                         <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                             MacroLog
                         </span>
@@ -57,11 +182,18 @@ defineProps({
         </header>
 
         <!-- Hero Section -->
-        <section class="pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-            <div class="max-w-7xl mx-auto">
+        <section class="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50 overflow-hidden">
+            <!-- Animated background elements -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse-slow"></div>
+                <div class="absolute top-40 right-10 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse-slow" style="animation-delay: 1s;"></div>
+                <div class="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse-slow" style="animation-delay: 2s;"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto relative">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     <!-- Hero Content -->
-                    <div class="text-center lg:text-left">
+                    <div class="text-center lg:text-left scroll-animate">
                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
                             Smart Nutrition Tracking,
                             <span class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
@@ -78,14 +210,15 @@ defineProps({
                             <Link
                                 v-if="canRegister"
                                 :href="route('register')"
-                                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl text-center"
+                                class="group relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-2xl hover:scale-105 text-center overflow-hidden"
                             >
-                                Get Started Free
+                                <span class="relative z-10">Get Started Free</span>
+                                <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </Link>
                             <Link
                                 v-if="canLogin && !$page.props.auth.user"
                                 :href="route('login')"
-                                class="bg-white text-gray-700 px-8 py-4 rounded-lg font-semibold border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all text-center"
+                                class="bg-white text-gray-700 px-8 py-4 rounded-lg font-semibold border-2 border-gray-200 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all hover:scale-105 text-center"
                             >
                                 Sign In
                             </Link>
@@ -115,13 +248,13 @@ defineProps({
                     </div>
 
                     <!-- Hero Image/Mockup -->
-                    <div class="relative">
-                        <div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl shadow-2xl overflow-hidden">
+                    <div class="relative scroll-animate animate-float">
+                        <div class="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-500">
                             <!-- Placeholder for dashboard screenshot -->
                             <div class="w-full h-full flex items-center justify-center p-8">
                                 <div class="space-y-4 w-full">
                                     <!-- Mock meal card -->
-                                    <div class="bg-white rounded-xl p-4 shadow-lg">
+                                    <div class="bg-white rounded-xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1">
                                         <div class="flex items-center justify-between mb-3">
                                             <h3 class="font-semibold text-gray-900">Breakfast</h3>
                                             <span class="text-xs text-gray-500">8:30 AM</span>
@@ -173,7 +306,7 @@ defineProps({
         <section class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
             <div class="max-w-7xl mx-auto">
                 <!-- Section Header -->
-                <div class="text-center mb-16">
+                <div class="text-center mb-16 scroll-animate">
                     <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                         Everything You Need to Achieve Your Goals
                     </h2>
@@ -185,78 +318,78 @@ defineProps({
                 <!-- Features Grid -->
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Feature 1: AI Meal Logging -->
-                    <div class="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-                        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="group scroll-animate bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-200 transition-all duration-300 cursor-pointer">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:scale-110 transition-all duration-300">
+                            <svg class="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Natural Language Input</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">Natural Language Input</h3>
                         <p class="text-gray-600">
                             Simply describe your meal in plain text. AI automatically extracts calories and macros from any dish.
                         </p>
                     </div>
 
                     <!-- Feature 2: Macro Tracking -->
-                    <div class="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-                        <div class="w-12 h-12 bg-gradient-to-br from-orange-100 via-blue-100 to-purple-100 rounded-xl flex items-center justify-center mb-4">
+                    <div class="group scroll-animate bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-2 hover:border-orange-200 transition-all duration-300 cursor-pointer" style="animation-delay: 0.1s;">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-100 via-blue-100 to-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
                             <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Color-Coded Macros</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">Color-Coded Macros</h3>
                         <p class="text-gray-600">
                             Track protein, carbs, and fats with beautiful, intuitive color-coding. See your nutrition at a glance.
                         </p>
                     </div>
 
                     <!-- Feature 3: Goal Management -->
-                    <div class="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-                        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="group scroll-animate bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-200 transition-all duration-300 cursor-pointer" style="animation-delay: 0.2s;">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:scale-110 transition-all duration-300">
+                            <svg class="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Personalized Goals</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">Personalized Goals</h3>
                         <p class="text-gray-600">
                             Set custom nutrition targets based on your weight goals, timeline, and activity level.
                         </p>
                     </div>
 
                     <!-- Feature 4: Smart Insights -->
-                    <div class="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="group scroll-animate bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-2 hover:border-purple-200 transition-all duration-300 cursor-pointer" style="animation-delay: 0.3s;">
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:scale-110 transition-all duration-300">
+                            <svg class="w-6 h-6 text-purple-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">AI-Powered Insights</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">AI-Powered Insights</h3>
                         <p class="text-gray-600">
                             Get intelligent feedback on your meals with context-aware recommendations and practical suggestions.
                         </p>
                     </div>
 
                     <!-- Feature 5: History Tracking -->
-                    <div class="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="group scroll-animate bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-2 hover:border-blue-200 transition-all duration-300 cursor-pointer" style="animation-delay: 0.4s;">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:scale-110 transition-all duration-300">
+                            <svg class="w-6 h-6 text-blue-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">7-Day History</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">7-Day History</h3>
                         <p class="text-gray-600">
                             Review your meal history for the past week with daily totals and progress tracking.
                         </p>
                     </div>
 
                     <!-- Feature 6: PWA Support -->
-                    <div class="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
-                            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="group scroll-animate bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-2xl hover:-translate-y-2 hover:border-emerald-200 transition-all duration-300 cursor-pointer" style="animation-delay: 0.5s;">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:scale-110 transition-all duration-300">
+                            <svg class="w-6 h-6 text-emerald-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Works Offline</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">Works Offline</h3>
                         <p class="text-gray-600">
                             Progressive Web App that works offline and can be installed on any device.
                         </p>
@@ -269,7 +402,7 @@ defineProps({
         <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
             <div class="max-w-7xl mx-auto">
                 <!-- Section Header -->
-                <div class="text-center mb-16">
+                <div class="text-center mb-16 scroll-animate">
                     <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                         Get Started in 3 Simple Steps
                     </h2>
@@ -281,9 +414,9 @@ defineProps({
                 <!-- Steps -->
                 <div class="grid md:grid-cols-3 gap-8">
                     <!-- Step 1 -->
-                    <div class="relative">
-                        <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mb-6">
+                    <div class="relative scroll-animate">
+                        <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mb-6 animate-gradient">
                                 1
                             </div>
                             <h3 class="text-xl font-semibold text-gray-900 mb-3">Create Your Account</h3>
@@ -301,17 +434,17 @@ defineProps({
                             </div>
                         </div>
                         <!-- Connector Arrow (hidden on mobile) -->
-                        <div class="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                            <svg class="w-8 h-8 text-indigo-300" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                            <svg class="w-8 h-8 text-indigo-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
                         </div>
                     </div>
 
                     <!-- Step 2 -->
-                    <div class="relative">
-                        <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mb-6">
+                    <div class="relative scroll-animate" style="animation-delay: 0.2s;">
+                        <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mb-6 animate-gradient">
                                 2
                             </div>
                             <h3 class="text-xl font-semibold text-gray-900 mb-3">Add Your API Key</h3>
@@ -329,17 +462,17 @@ defineProps({
                             </div>
                         </div>
                         <!-- Connector Arrow (hidden on mobile) -->
-                        <div class="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                            <svg class="w-8 h-8 text-indigo-300" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                            <svg class="w-8 h-8 text-indigo-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                             </svg>
                         </div>
                     </div>
 
                     <!-- Step 3 -->
-                    <div class="relative">
-                        <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mb-6">
+                    <div class="relative scroll-animate" style="animation-delay: 0.4s;">
+                        <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mb-6 animate-gradient">
                                 3
                             </div>
                             <h3 class="text-xl font-semibold text-gray-900 mb-3">Start Logging Meals</h3>
@@ -366,7 +499,7 @@ defineProps({
         <section class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
             <div class="max-w-7xl mx-auto">
                 <!-- Section Header -->
-                <div class="text-center mb-16">
+                <div class="text-center mb-16 scroll-animate">
                     <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                         Why Choose MacroLog?
                     </h2>
@@ -375,39 +508,39 @@ defineProps({
                 <!-- Benefits Grid -->
                 <div class="grid md:grid-cols-3 gap-8">
                     <!-- Benefit 1 -->
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <div class="text-center scroll-animate group">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 group-hover:shadow-lg">
                             <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-3">No Subscription Fees</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">No Subscription Fees</h3>
                         <p class="text-gray-600">
                             Bring your own OpenAI API key and pay only for what you use. No hidden costs, no monthly fees. Complete transparency.
                         </p>
                     </div>
 
                     <!-- Benefit 2 -->
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <div class="text-center scroll-animate group" style="animation-delay: 0.2s;">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 group-hover:shadow-lg">
                             <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Your Data, Your Control</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Your Data, Your Control</h3>
                         <p class="text-gray-600">
                             Your API keys are encrypted and stored securely. Your nutrition data belongs to you, always private and protected.
                         </p>
                     </div>
 
                     <!-- Benefit 3 -->
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <div class="text-center scroll-animate group" style="animation-delay: 0.4s;">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 group-hover:shadow-lg">
                             <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-3">AI-Powered Intelligence</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">AI-Powered Intelligence</h3>
                         <p class="text-gray-600">
                             Leveraging GPT-4o-mini for accurate nutritional analysis and personalized insights that help you reach your goals.
                         </p>
@@ -420,7 +553,7 @@ defineProps({
         <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
             <div class="max-w-4xl mx-auto">
                 <!-- Section Header -->
-                <div class="text-center mb-16">
+                <div class="text-center mb-16 scroll-animate">
                     <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                         Frequently Asked Questions
                     </h2>
@@ -429,7 +562,7 @@ defineProps({
                 <!-- FAQ List -->
                 <div class="space-y-6">
                     <!-- FAQ 1 -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="scroll-animate bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-transparent hover:border-indigo-200">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">
                             Why do I need to bring my own OpenAI API key?
                         </h3>
@@ -439,7 +572,7 @@ defineProps({
                     </div>
 
                     <!-- FAQ 2 -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="scroll-animate bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-transparent hover:border-indigo-200" style="animation-delay: 0.1s;">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">
                             How much does the OpenAI API cost?
                         </h3>
@@ -449,7 +582,7 @@ defineProps({
                     </div>
 
                     <!-- FAQ 3 -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="scroll-animate bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-transparent hover:border-indigo-200" style="animation-delay: 0.2s;">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">
                             Is my nutrition data private and secure?
                         </h3>
@@ -459,7 +592,7 @@ defineProps({
                     </div>
 
                     <!-- FAQ 4 -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="scroll-animate bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-transparent hover:border-indigo-200" style="animation-delay: 0.3s;">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">
                             What features are included?
                         </h3>
@@ -469,7 +602,7 @@ defineProps({
                     </div>
 
                     <!-- FAQ 5 -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="scroll-animate bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-transparent hover:border-indigo-200" style="animation-delay: 0.4s;">
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">
                             Can I use MacroLog offline?
                         </h3>
@@ -482,8 +615,14 @@ defineProps({
         </section>
 
         <!-- Final CTA Section -->
-        <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-600 to-purple-600">
-            <div class="max-w-4xl mx-auto text-center">
+        <section class="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-600 to-purple-600 overflow-hidden animate-gradient">
+            <!-- Animated background elements -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="absolute top-10 left-20 w-64 h-64 bg-white rounded-full mix-blend-overlay filter blur-xl opacity-10 animate-pulse-slow"></div>
+                <div class="absolute bottom-10 right-20 w-64 h-64 bg-white rounded-full mix-blend-overlay filter blur-xl opacity-10 animate-pulse-slow" style="animation-delay: 1.5s;"></div>
+            </div>
+
+            <div class="max-w-4xl mx-auto text-center relative scroll-animate">
                 <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
                     Ready to Transform Your Nutrition Journey?
                 </h2>
@@ -495,14 +634,15 @@ defineProps({
                     <Link
                         v-if="canRegister"
                         :href="route('register')"
-                        class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl text-center"
+                        class="group relative bg-white text-indigo-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-all shadow-lg hover:shadow-2xl hover:scale-105 text-center overflow-hidden"
                     >
-                        Get Started Free
+                        <span class="relative z-10">Get Started Free</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-indigo-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </Link>
                     <Link
                         v-if="canLogin && !$page.props.auth.user"
                         :href="route('login')"
-                        class="bg-indigo-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-800 transition-all border-2 border-white/20 text-center"
+                        class="bg-indigo-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-800 transition-all border-2 border-white/20 hover:border-white/40 hover:scale-105 text-center"
                     >
                         Sign In
                     </Link>
