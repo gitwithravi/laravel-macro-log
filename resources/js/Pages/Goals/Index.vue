@@ -425,7 +425,7 @@ const weightDifference = (goal) => {
 
                                     <!-- Intelligent Calculate Button (only show if user has API key) -->
                                     <button
-                                        v-if="user.open_api_key"
+                                        v-if="user.has_open_api_key"
                                         type="button"
                                         @click="openCalculatorModal"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors duration-150"

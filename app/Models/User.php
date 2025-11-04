@@ -60,6 +60,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $appends = [
         'profile_photo_url',
+        'has_open_api_key',
     ];
 
     /**
@@ -130,5 +131,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getHeightNumericAttribute(): ?float
     {
         return $this->height ? (float) $this->height : null;
+    }
+
+    /**
+     * Check if the user has an OpenAI API key configured.
+     * This allows the frontend to know if the key exists without exposing the actual key.
+     */
+    public function getHasOpenApiKeyAttribute(): bool
+    {
+        return !empty($this->open_api_key);
     }
 }

@@ -28,7 +28,15 @@ const photoPreview = ref(null);
 const photoInput = ref(null);
 const showApiKey = ref(false);
 
+// Track if user has an existing API key
+const hasExistingApiKey = ref(props.user.has_open_api_key || false);
+
 const maskedApiKey = computed(() => {
+    // If user has an existing key but hasn't entered a new one, show masked placeholder
+    if (hasExistingApiKey.value && !form.open_api_key) {
+        return 'sk-••••••••••••••••••••••••••';
+    }
+
     if (!form.open_api_key) return '';
     if (showApiKey.value) return form.open_api_key;
 
@@ -51,7 +59,14 @@ const updateProfileInformation = () => {
     form.post(route('user-profile-information.update'), {
         errorBag: 'updateProfileInformation',
         preserveScroll: true,
-        onSuccess: () => clearPhotoFileInput(),
+        onSuccess: () => {
+            clearPhotoFileInput();
+            // If a new API key was set, update the tracking variable
+            if (form.open_api_key) {
+                hasExistingApiKey.value = true;
+                form.open_api_key = ''; // Clear the form field for security
+            }
+        },
     });
 };
 
@@ -253,7 +268,7 @@ const clearPhotoFileInput = () => {
                     <div class="relative">
                         <!-- Masked Display (when key exists and not revealed) -->
                         <div
-                            v-if="form.open_api_key && !showApiKey"
+                            v-if="(hasExistingApiKey || form.open_api_key) && !showApiKey"
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 font-mono text-sm text-gray-700 pr-24"
                         >
                             {{ maskedApiKey }}
@@ -270,19 +285,19 @@ const clearPhotoFileInput = () => {
                             placeholder="sk-..."
                         />
 
-                        <!-- Reveal/Hide Button -->
+                        <!-- Reveal/Hide/Change Button -->
                         <button
-                            v-if="form.open_api_key"
+                            v-if="hasExistingApiKey || form.open_api_key"
                             type="button"
                             @click="toggleApiKeyVisibility"
                             class="absolute right-2 top-1/2 -translate-y-1/2 mt-0.5 px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
                         >
-                            {{ showApiKey ? 'Hide' : 'Reveal' }}
+                            {{ showApiKey ? 'Hide' : (hasExistingApiKey && !form.open_api_key ? 'Change' : 'Reveal') }}
                         </button>
                     </div>
                     <InputError :message="form.errors.open_api_key" class="mt-2" />
                     <p class="mt-2 text-sm text-gray-500">
-                        Your API key will be stored securely and never shared.{{ form.open_api_key ? ' Currently set.' : '' }}
+                        Your API key will be stored securely and never shared.{{ hasExistingApiKey ? ' Currently set.' : '' }}
                     </p>
                 </div>
             </div>
