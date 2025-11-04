@@ -13,6 +13,8 @@ onMounted(() => {
 
     // Listen for the beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('PWA: beforeinstallprompt event fired');
+
         // Prevent the mini-infobar from appearing on mobile
         e.preventDefault();
 
@@ -21,15 +23,20 @@ onMounted(() => {
 
         // Show prompt if not dismissed and not already installed
         if (!dismissed && !isStandalone) {
-            // Small delay to let the page settle
+            // Show after brief delay to ensure page is interactive
+            // Reduced to 500ms for faster appearance
             setTimeout(() => {
+                console.log('PWA: Showing install prompt');
                 showInstallPrompt.value = true;
-            }, 2000);
+            }, 500);
+        } else {
+            console.log('PWA: Install prompt suppressed', { dismissed, isStandalone });
         }
     });
 
     // Listen for app installed event
     window.addEventListener('appinstalled', () => {
+        console.log('PWA: App installed');
         showInstallPrompt.value = false;
         deferredPrompt.value = null;
         localStorage.removeItem('pwa-install-dismissed');
@@ -37,7 +44,12 @@ onMounted(() => {
 });
 
 const installApp = async () => {
-    if (!deferredPrompt.value) return;
+    if (!deferredPrompt.value) {
+        console.log('PWA: No deferred prompt available');
+        return;
+    }
+
+    console.log('PWA: Triggering native install prompt');
 
     // Show the install prompt
     deferredPrompt.value.prompt();
@@ -45,8 +57,12 @@ const installApp = async () => {
     // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.value.userChoice;
 
+    console.log('PWA: User choice:', outcome);
+
     if (outcome === 'accepted') {
-        console.log('User accepted the install prompt');
+        console.log('PWA: User accepted the install prompt');
+    } else {
+        console.log('PWA: User dismissed the install prompt');
     }
 
     // Clear the deferredPrompt
@@ -55,6 +71,7 @@ const installApp = async () => {
 };
 
 const dismissPrompt = () => {
+    console.log('PWA: Install prompt dismissed by user');
     showInstallPrompt.value = false;
     localStorage.setItem('pwa-install-dismissed', 'true');
 };
