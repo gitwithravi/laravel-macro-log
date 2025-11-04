@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'profile.complete' => \App\Http\Middleware\EnsureProfileIsComplete::class,
             'rate.limit.openai' => \App\Http\Middleware\RateLimitOpenAI::class,
