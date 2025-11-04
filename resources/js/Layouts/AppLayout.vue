@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Banner from '@/Components/Banner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -10,9 +10,16 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import PWAUpdatePrompt from '@/Components/PWAUpdatePrompt.vue';
 import InstallPrompt from '@/Components/InstallPrompt.vue';
 import OfflineIndicator from '@/Components/OfflineIndicator.vue';
+import ProfileCompletionModal from '@/Components/ProfileCompletionModal.vue';
 
 defineProps({
     title: String,
+});
+
+const page = usePage();
+const showProfileCompletionModal = computed(() => {
+    const profileFields = page.props.profileFields;
+    return profileFields && profileFields.has_completed_profile === false;
 });
 
 const showingNavigationDropdown = ref(false);
@@ -49,6 +56,9 @@ const closeProfileMenu = () => {
         <OfflineIndicator />
         <PWAUpdatePrompt />
         <InstallPrompt />
+
+        <!-- Profile Completion Modal -->
+        <ProfileCompletionModal :show="showProfileCompletionModal" />
 
         <div class="min-h-screen bg-gray-100">
             <nav class="hidden sm:block bg-white border-b border-gray-100">

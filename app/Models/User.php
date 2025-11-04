@@ -89,4 +89,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(MealEntry::class);
     }
+
+    /**
+     * Check if the user has completed their profile.
+     */
+    public function hasCompletedProfile(): bool
+    {
+        return !is_null($this->date_of_birth)
+            && !is_null($this->gender)
+            && !is_null($this->height)
+            && !is_null($this->open_api_key);
+    }
 }

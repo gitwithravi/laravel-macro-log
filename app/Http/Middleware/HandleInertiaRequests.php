@@ -35,9 +35,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
-            //
-        ];
+        return array_merge(parent::share($request), [
+            'profileFields' => $request->user() ? [
+                'date_of_birth' => $request->user()->date_of_birth,
+                'gender' => $request->user()->gender,
+                'height' => $request->user()->height,
+                'open_api_key' => $request->user()->open_api_key,
+                'has_completed_profile' => $request->user()->hasCompletedProfile(),
+            ] : null,
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\MealEntryController;
+use App\Http\Controllers\ProfileCompletionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,10 +27,20 @@ Route::middleware('guest')->group(function () {
         ->name('socialite.one-tap');
 });
 
+// Profile Completion Route (no email verification required)
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+])->group(function () {
+    Route::post('/profile/complete', [ProfileCompletionController::class, 'update'])
+        ->name('profile.update-completion');
+});
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    'profile.complete',
 ])->group(function () {
     // Dashboard & Meal Logging Routes
     Route::get('/dashboard', [MealEntryController::class, 'dashboard'])->name('dashboard');
