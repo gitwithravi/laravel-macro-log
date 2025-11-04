@@ -39,31 +39,39 @@
         <!-- PWA Service Worker Registration -->
         <script>
             if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js', { scope: '/' })
-                        .then(function(registration) {
-                            console.log('ServiceWorker registration successful:', registration.scope);
+                // Register SW immediately for faster PWA prompt on first visit
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful:', registration.scope);
 
-                            // Check for updates
-                            registration.addEventListener('updatefound', function() {
-                                const newWorker = registration.installing;
-                                newWorker.addEventListener('statechange', function() {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        console.log('New service worker available');
-                                        window.dispatchEvent(new CustomEvent('swUpdateAvailable', {
-                                            detail: function() {
-                                                newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                                window.location.reload();
-                                            }
-                                        }));
-                                    }
-                                });
+                        // Force activation on first install
+                        if (registration.installing) {
+                            registration.installing.addEventListener('statechange', function(e) {
+                                if (e.target.state === 'activated') {
+                                    console.log('Service Worker activated');
+                                }
                             });
-                        })
-                        .catch(function(error) {
-                            console.log('ServiceWorker registration failed:', error);
+                        }
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', function() {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('New service worker available');
+                                    window.dispatchEvent(new CustomEvent('swUpdateAvailable', {
+                                        detail: function() {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                            window.location.reload();
+                                        }
+                                    }));
+                                }
+                            });
                         });
-                });
+                    })
+                    .catch(function(error) {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
             }
         </script>
     </head>

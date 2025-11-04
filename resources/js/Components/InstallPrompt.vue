@@ -5,6 +5,12 @@ const showInstallPrompt = ref(false);
 const deferredPrompt = ref(null);
 
 onMounted(() => {
+    // Check if already installed or dismissed
+    const dismissed = localStorage.getItem('pwa-install-dismissed');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                      || window.navigator.standalone
+                      || document.referrer.includes('android-app://');
+
     // Listen for the beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e) => {
         // Prevent the mini-infobar from appearing on mobile
@@ -13,10 +19,12 @@ onMounted(() => {
         // Stash the event so it can be triggered later
         deferredPrompt.value = e;
 
-        // Check if user has dismissed before
-        const dismissed = localStorage.getItem('pwa-install-dismissed');
-        if (!dismissed) {
-            showInstallPrompt.value = true;
+        // Show prompt if not dismissed and not already installed
+        if (!dismissed && !isStandalone) {
+            // Small delay to let the page settle
+            setTimeout(() => {
+                showInstallPrompt.value = true;
+            }, 2000);
         }
     });
 
@@ -24,6 +32,7 @@ onMounted(() => {
     window.addEventListener('appinstalled', () => {
         showInstallPrompt.value = false;
         deferredPrompt.value = null;
+        localStorage.removeItem('pwa-install-dismissed');
     });
 });
 
