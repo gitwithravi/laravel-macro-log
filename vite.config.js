@@ -29,6 +29,67 @@ export default defineConfig({
             manifestFilename: 'manifest.webmanifest',
             strategies: 'generateSW',
             filename: '../sw.js',
+            workbox: {
+                globDirectory: 'public/build',
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+                navigateFallback: null,
+                modifyURLPrefix: {
+                    '': 'build/'
+                },
+                runtimeCaching: [
+                    {
+                        urlPattern: /^https:\/\/.*\/api\/.*/i,
+                        handler: 'NetworkFirst',
+                        options: {
+                            cacheName: 'api-cache',
+                            expiration: {
+                                maxEntries: 50,
+                                maxAgeSeconds: 60 * 60
+                            },
+                            networkTimeoutSeconds: 10
+                        }
+                    },
+                    {
+                        urlPattern: /^\/(dashboard|history|goals|profile).*/i,
+                        handler: 'NetworkFirst',
+                        options: {
+                            cacheName: 'pages-cache',
+                            expiration: {
+                                maxEntries: 20,
+                                maxAgeSeconds: 60 * 30
+                            },
+                            networkTimeoutSeconds: 5
+                        }
+                    },
+                    {
+                        urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|woff|woff2)$/,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'assets-cache',
+                            expiration: {
+                                maxEntries: 100,
+                                maxAgeSeconds: 60 * 60 * 24 * 30
+                            }
+                        }
+                    },
+                    {
+                        urlPattern: /^https:\/\/fonts\.bunny\.net\/.*/i,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'google-fonts-cache',
+                            expiration: {
+                                maxEntries: 30,
+                                maxAgeSeconds: 60 * 60 * 24 * 365
+                            },
+                            cacheableResponse: {
+                                statuses: [0, 200]
+                            }
+                        }
+                    }
+                ],
+                skipWaiting: true,
+                clientsClaim: true
+            },
             manifest: {
                 name: 'Macro Log - Meal Tracker',
                 short_name: 'Macro Log',
@@ -108,65 +169,6 @@ export default defineConfig({
                         icons: [{ src: '/icons/icon-192x192.png', sizes: '192x192' }]
                     }
                 ]
-            },
-
-            workbox: {
-                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-
-                runtimeCaching: [
-                    {
-                        urlPattern: /^https:\/\/.*\/api\/.*/i,
-                        handler: 'NetworkFirst',
-                        options: {
-                            cacheName: 'api-cache',
-                            expiration: {
-                                maxEntries: 50,
-                                maxAgeSeconds: 60 * 60
-                            },
-                            networkTimeoutSeconds: 10
-                        }
-                    },
-                    {
-                        urlPattern: /^\/(dashboard|history|goals|profile).*/i,
-                        handler: 'NetworkFirst',
-                        options: {
-                            cacheName: 'pages-cache',
-                            expiration: {
-                                maxEntries: 20,
-                                maxAgeSeconds: 60 * 30
-                            },
-                            networkTimeoutSeconds: 5
-                        }
-                    },
-                    {
-                        urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|woff|woff2)$/,
-                        handler: 'CacheFirst',
-                        options: {
-                            cacheName: 'assets-cache',
-                            expiration: {
-                                maxEntries: 100,
-                                maxAgeSeconds: 60 * 60 * 24 * 30
-                            }
-                        }
-                    },
-                    {
-                        urlPattern: /^https:\/\/fonts\.bunny\.net\/.*/i,
-                        handler: 'CacheFirst',
-                        options: {
-                            cacheName: 'google-fonts-cache',
-                            expiration: {
-                                maxEntries: 30,
-                                maxAgeSeconds: 60 * 60 * 24 * 365
-                            },
-                            cacheableResponse: {
-                                statuses: [0, 200]
-                            }
-                        }
-                    }
-                ],
-
-                skipWaiting: true,
-                clientsClaim: true
             },
 
             devOptions: {
