@@ -32,8 +32,8 @@ class Goal extends Model
     protected function casts(): array
     {
         return [
-            'current_weight' => 'decimal:2',
-            'target_weight' => 'decimal:2',
+            'current_weight' => 'encrypted',  // Encrypt PII - current weight
+            'target_weight' => 'encrypted',  // Encrypt PII - target weight
             'daily_goal_calories' => 'integer',
             'daily_goal_protein' => 'decimal:2',
             'daily_goal_carb' => 'decimal:2',
@@ -49,5 +49,23 @@ class Goal extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get numeric current weight value (decrypted automatically by 'encrypted' cast).
+     * This accessor ensures weight can be used in calculations.
+     */
+    public function getCurrentWeightNumericAttribute(): ?float
+    {
+        return $this->current_weight ? (float) $this->current_weight : null;
+    }
+
+    /**
+     * Get numeric target weight value (decrypted automatically by 'encrypted' cast).
+     * This accessor ensures weight can be used in calculations.
+     */
+    public function getTargetWeightNumericAttribute(): ?float
+    {
+        return $this->target_weight ? (float) $this->target_weight : null;
     }
 }

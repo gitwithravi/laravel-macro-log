@@ -49,6 +49,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'two_factor_recovery_codes',
         'two_factor_secret',
         'open_api_key',  // Hide API key from serialization
+        // Note: We don't hide PII fields as frontend needs them, but they're encrypted
     ];
 
     /**
@@ -70,8 +71,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'date_of_birth' => 'date:Y-m-d',
-            'height' => 'decimal:2',
+            'date_of_birth' => 'encrypted',  // Encrypt PII - date of birth
+            'gender' => 'encrypted',  // Encrypt PII - gender
+            'height' => 'encrypted',  // Encrypt PII - height
             'open_api_key' => 'encrypted',  // Encrypt API key at rest
         ];
     }
@@ -101,5 +103,31 @@ class User extends Authenticatable implements MustVerifyEmail
             && !is_null($this->gender)
             && !is_null($this->height)
             && !is_null($this->open_api_key);
+    }
+
+    /**
+     * Get formatted date of birth (decrypted automatically by 'encrypted' cast).
+     * This accessor ensures date formatting works properly with encryption.
+     */
+    public function getFormattedDateOfBirthAttribute(): ?string
+    {
+        if (!$this->date_of_birth) {
+            return null;
+        }
+
+        try {
+            return \Carbon\Carbon::parse($this->date_of_birth)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return $this->date_of_birth;
+        }
+    }
+
+    /**
+     * Get numeric height value (decrypted automatically by 'encrypted' cast).
+     * This accessor ensures height can be used in calculations.
+     */
+    public function getHeightNumericAttribute(): ?float
+    {
+        return $this->height ? (float) $this->height : null;
     }
 }
