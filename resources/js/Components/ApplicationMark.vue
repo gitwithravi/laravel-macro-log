@@ -1,7 +1,11 @@
+<script setup>
+import logoUrl from '/public/icons/application.png';
+</script>
+
 <template>
     <div class="flex items-center space-x-2">
         <img
-            src="/icons/application.png"
+            :src="logoUrl"
             alt="MacroLog"
             class="w-9 h-9 transform transition-transform hover:scale-110 duration-300"
         />

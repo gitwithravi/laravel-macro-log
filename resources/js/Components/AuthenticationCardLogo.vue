@@ -1,11 +1,12 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
+import logoUrl from '/public/icons/application.png';
 </script>
 
 <template>
     <Link :href="'/'" class="flex flex-col items-center space-y-3">
         <img
-            src="/icons/application.png"
+            :src="logoUrl"
             alt="MacroLog"
             class="w-16 h-16 transform transition-transform hover:scale-110 duration-300"
         />

@@ -1,4 +1,6 @@
 <script setup>
+import logoUrl from '/public/icons/application.png';
+
 defineProps({
     size: {
         type: String,
@@ -16,7 +18,7 @@ const sizeClasses = {
 
 <template>
     <img
-        :src="'/icons/application.png'"
+        :src="logoUrl"
         alt="MacroLog"
         :class="[sizeClasses[size], 'transform transition-transform hover:scale-110 duration-300']"
     />

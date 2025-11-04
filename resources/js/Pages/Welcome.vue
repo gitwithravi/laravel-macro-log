@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
+import logoUrl from '/public/icons/application.png';
 
 defineProps({
     canLogin: {
@@ -182,7 +183,7 @@ onMounted(() => {
                     <!-- Logo -->
                     <div class="flex items-center space-x-2 group cursor-pointer" @click="scrollToTop">
                         <img
-                            src="/icons/application.png"
+                            :src="logoUrl"
                             alt="MacroLog"
                             class="w-8 h-8 transform transition-transform group-hover:scale-110 duration-300"
                         />
@@ -1215,7 +1216,7 @@ onMounted(() => {
                     <div class="md:col-span-1">
                         <div class="flex items-center space-x-2 mb-4">
                             <img
-                                src="/icons/application.png"
+                                :src="logoUrl"
                                 alt="MacroLog"
                                 class="w-8 h-8"
                             />

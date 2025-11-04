@@ -1,4 +1,6 @@
 <script setup>
+import logoUrl from '/public/icons/application.png';
+
 defineProps({
     size: {
         type: String,
@@ -22,7 +24,7 @@ const sizeClasses = {
     <div class="flex items-center space-x-2 group">
         <!-- Logo Icon -->
         <img
-            :src="'/icons/application.png'"
+            :src="logoUrl"
             alt="MacroLog"
             :class="[
                 sizeClasses[size].icon,
