@@ -181,8 +181,12 @@ onMounted(() => {
                 <div class="flex items-center justify-between h-16">
                     <!-- Logo -->
                     <div class="flex items-center space-x-2 group cursor-pointer" @click="scrollToTop">
-                        <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg transform transition-transform group-hover:rotate-12 group-hover:scale-110 duration-300"></div>
-                        <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        <img
+                            src="/icons/application.png"
+                            alt="MacroLog"
+                            class="w-8 h-8 transform transition-transform group-hover:scale-110 duration-300"
+                        />
+                        <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                             MacroLog
                         </span>
                     </div>
@@ -1210,8 +1214,12 @@ onMounted(() => {
                     <!-- Brand Column -->
                     <div class="md:col-span-1">
                         <div class="flex items-center space-x-2 mb-4">
-                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg"></div>
-                            <span class="text-lg font-bold text-white">MacroLog</span>
+                            <img
+                                src="/icons/application.png"
+                                alt="MacroLog"
+                                class="w-8 h-8"
+                            />
+                            <span class="text-lg font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">MacroLog</span>
                         </div>
                         <p class="text-sm text-gray-400 mb-4">
                             Smart nutrition tracking powered by AI. No subscriptions, complete control.

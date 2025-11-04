@@ -4,6 +4,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import GoogleSignIn from '@/Components/GoogleSignIn.vue';
 
 const form = useForm({
     name: '',
@@ -39,7 +40,24 @@ const submit = () => {
 
                 <!-- Register Form Card -->
                 <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                    <form @submit.prevent="submit" class="p-6 sm:p-8 space-y-5">
+                    <div class="p-6 sm:p-8">
+                        <!-- Google Sign-In -->
+                        <div class="mb-6">
+                            <GoogleSignIn :show-one-tap="false" mode="signup" />
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="relative mb-6">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-200"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-4 bg-white text-gray-500 font-medium">Or register with email</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form @submit.prevent="submit" class="px-6 pb-6 sm:px-8 sm:pb-8 space-y-5">
                         <!-- Name -->
                         <div>
                             <InputLabel for="name" value="Full Name" class="text-sm font-semibold" />

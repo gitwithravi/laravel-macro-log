@@ -16,10 +16,13 @@
         <meta name="description" content="Track your meals and nutrition goals with AI-powered insights">
 
         <!-- Apple Touch Icons -->
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+        <link rel="apple-touch-icon" href="/favicon.png">
 
         <!-- Favicon -->
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="icon" type="image/png" href="/favicon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
+        <link rel="shortcut icon" type="image/png" href="/favicon.png">
 
         <!-- PWA Manifest -->
         <link rel="manifest" href="/build/manifest.webmanifest">

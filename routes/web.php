@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\MealEntryController;
 use Illuminate\Foundation\Application;
@@ -13,6 +14,16 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+
+// Social Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])
+        ->name('socialite.redirect');
+    Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])
+        ->name('socialite.callback');
+    Route::post('/auth/google/one-tap', [SocialiteController::class, 'handleOneTap'])
+        ->name('socialite.one-tap');
 });
 
 Route::middleware([

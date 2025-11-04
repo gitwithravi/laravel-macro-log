@@ -86,6 +86,10 @@ Pages are automatically resolved from `resources/js/Pages/` using Vite's glob im
 - User actions are handled by classes in `app/Actions/Fortify/` and `app/Actions/Jetstream/`
 - Authentication uses Sanctum with session-based auth for web (configured in `config/jetstream.php`)
 - Available Jetstream features: Account deletion (profile photos, API tokens, and teams are disabled)
+- **Social Authentication**: Google OAuth via Laravel Socialite with Google One Tap support
+  - Traditional OAuth flow: `auth/google/redirect` and `auth/google/callback`
+  - Google One Tap: Integrated on login page for native-like experience on mobile
+  - Action class: `app/Actions/Socialite/CreateUserFromProvider.php`
 
 **Key Directories:**
 - `app/Actions/` - Action classes for user-related operations (password reset, user creation, profile updates, etc.)
@@ -143,6 +147,43 @@ Vite is configured to:
 - Support Vue 3 single-file components
 - Enable hot module replacement during development
 - Transform asset URLs in Vue templates
+
+### Google OAuth Configuration
+
+To enable Google Sign-In with One Tap:
+
+1. **Create Google OAuth Credentials:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+   - Create a new OAuth 2.0 Client ID (Web application type)
+   - Add authorized redirect URIs:
+     - `http://localhost:8000/auth/google/callback` (development)
+     - Your production URL + `/auth/google/callback`
+   - Add authorized JavaScript origins:
+     - `http://localhost:8000` (development)
+     - Your production domain
+
+2. **Configure Environment Variables:**
+   Add the following to your `.env` file:
+   ```env
+   GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-client-secret
+   GOOGLE_REDIRECT_URI="${APP_URL}/auth/google/callback"
+   VITE_GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}"
+   ```
+
+3. **Rebuild Frontend Assets:**
+   After updating environment variables, rebuild Vite:
+   ```bash
+   npm run build  # Production
+   # or
+   npm run dev    # Development
+   ```
+
+**Features:**
+- **Google One Tap**: Automatically prompts users on the login page (mobile-optimized)
+- **Traditional OAuth**: Fallback "Sign in with Google" button
+- **Auto-verification**: Email addresses from Google are automatically verified
+- **Account Linking**: Existing email accounts are automatically linked to Google OAuth
 
 ## Testing Structure
 
