@@ -25,8 +25,10 @@ export default defineConfig({
             includeAssets: ['favicon.ico', 'icons/*.png'],
             scope: '/',
             base: '/',
-            outDir: 'public',
+            outDir: 'public/build',
             manifestFilename: 'manifest.webmanifest',
+            strategies: 'generateSW',
+            filename: '../sw.js',
             manifest: {
                 name: 'Macro Log - Meal Tracker',
                 short_name: 'Macro Log',

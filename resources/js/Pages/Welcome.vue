@@ -13,9 +13,18 @@ defineProps({
 });
 
 const isHeaderScrolled = ref(false);
+const isMobileMenuOpen = ref(false);
 
 const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+const toggleMobileMenu = () => {
+    isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
+const closeMobileMenu = () => {
+    isMobileMenuOpen.value = false;
 };
 
 onMounted(() => {
@@ -211,8 +220,8 @@ onMounted(() => {
                         </a>
                     </div>
 
-                    <!-- Auth Links -->
-                    <div v-if="canLogin" class="flex items-center space-x-4">
+                    <!-- Desktop Auth Links -->
+                    <div v-if="canLogin" class="hidden lg:flex items-center space-x-4">
                         <Link
                             v-if="$page.props.auth.user"
                             :href="route('dashboard')"
@@ -236,7 +245,113 @@ onMounted(() => {
                             </Link>
                         </template>
                     </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button
+                        v-if="canLogin"
+                        @click="toggleMobileMenu"
+                        class="lg:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                        :aria-label="isMobileMenuOpen ? 'Close menu' : 'Open menu'"
+                    >
+                        <!-- Hamburger Icon -->
+                        <svg
+                            v-if="!isMobileMenuOpen"
+                            class="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <!-- Close Icon -->
+                        <svg
+                            v-else
+                            class="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
+
+                <!-- Mobile Menu -->
+                <transition
+                    enter-active-class="transition-all duration-300 ease-out"
+                    enter-from-class="opacity-0 -translate-y-2"
+                    enter-to-class="opacity-100 translate-y-0"
+                    leave-active-class="transition-all duration-200 ease-in"
+                    leave-from-class="opacity-100 translate-y-0"
+                    leave-to-class="opacity-0 -translate-y-2"
+                >
+                    <div v-if="isMobileMenuOpen" class="lg:hidden border-t border-gray-200 py-4 bg-white">
+                        <!-- Mobile Navigation Links -->
+                        <div class="flex flex-col space-y-4 mb-4">
+                            <a
+                                href="#features"
+                                @click="closeMobileMenu"
+                                class="text-gray-700 hover:text-indigo-600 font-medium transition-colors px-2 py-1"
+                            >
+                                Features
+                            </a>
+                            <a
+                                href="#screenshots"
+                                @click="closeMobileMenu"
+                                class="text-gray-700 hover:text-indigo-600 font-medium transition-colors px-2 py-1"
+                            >
+                                Screenshots
+                            </a>
+                            <a
+                                href="#how-it-works"
+                                @click="closeMobileMenu"
+                                class="text-gray-700 hover:text-indigo-600 font-medium transition-colors px-2 py-1"
+                            >
+                                How It Works
+                            </a>
+                            <a
+                                href="#pricing"
+                                @click="closeMobileMenu"
+                                class="text-gray-700 hover:text-indigo-600 font-medium transition-colors px-2 py-1"
+                            >
+                                Pricing
+                            </a>
+                            <a
+                                href="#faq"
+                                @click="closeMobileMenu"
+                                class="text-gray-700 hover:text-indigo-600 font-medium transition-colors px-2 py-1"
+                            >
+                                FAQ
+                            </a>
+                        </div>
+
+                        <!-- Mobile Auth Links -->
+                        <div class="flex flex-col space-y-3 border-t border-gray-200 pt-4">
+                            <Link
+                                v-if="$page.props.auth.user"
+                                :href="route('dashboard')"
+                                class="text-center py-2 px-4 text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                            >
+                                Dashboard
+                            </Link>
+                            <template v-else>
+                                <Link
+                                    :href="route('login')"
+                                    class="text-center py-2 px-4 text-gray-700 hover:text-indigo-600 font-medium transition-colors border border-gray-300 rounded-lg"
+                                >
+                                    Log in
+                                </Link>
+                                <Link
+                                    v-if="canRegister"
+                                    :href="route('register')"
+                                    class="text-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all shadow-sm hover:shadow-md"
+                                >
+                                    Get Started Free
+                                </Link>
+                            </template>
+                        </div>
+                    </div>
+                </transition>
             </nav>
         </header>
 

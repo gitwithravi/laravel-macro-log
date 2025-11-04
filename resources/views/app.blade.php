@@ -40,7 +40,7 @@
         <script>
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/build/sw.js', { scope: '/' })
+                    navigator.serviceWorker.register('/sw.js', { scope: '/' })
                         .then(function(registration) {
                             console.log('ServiceWorker registration successful:', registration.scope);
 
