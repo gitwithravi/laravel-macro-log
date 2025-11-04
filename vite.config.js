@@ -22,7 +22,8 @@ export default defineConfig({
         }),
         VitePWA({
             registerType: 'prompt',
-            includeAssets: ['favicon.ico', 'icons/*.png'],
+            includeAssets: [],
+            includeManifestIcons: false,
             scope: '/',
             base: '/',
             outDir: 'public/build',
@@ -30,12 +31,21 @@ export default defineConfig({
             strategies: 'generateSW',
             filename: '../sw.js',
             workbox: {
-                globDirectory: 'public/build',
-                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+                globDirectory: 'public',
+                globPatterns: ['build/**/*.{js,css,html,ico,png,svg,woff,woff2,webmanifest}'],
                 navigateFallback: null,
-                modifyURLPrefix: {
-                    '': 'build/'
-                },
+                additionalManifestEntries: [],
+                manifestTransforms: [
+                    (manifestEntries) => {
+                        // Remove duplicate manifest entry (without build/ prefix)
+                        // Also remove registerSW.js without prefix
+                        const manifest = manifestEntries.filter(entry =>
+                            entry.url !== 'manifest.webmanifest' && entry.url !== 'registerSW.js'
+                        );
+                        console.log(`Filtered ${manifestEntries.length - manifest.length} duplicate entries`);
+                        return { manifest };
+                    }
+                ],
                 runtimeCaching: [
                     {
                         urlPattern: /^https:\/\/.*\/api\/.*/i,
