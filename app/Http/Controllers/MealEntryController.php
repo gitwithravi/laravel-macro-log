@@ -236,9 +236,16 @@ class MealEntryController extends Controller
     {
         $client = \OpenAI::client($apiKey);
 
+        // Use PromptSecurity service to prevent injection attacks
+        $promptSecurity = new \App\Services\PromptSecurity();
+
         $systemPrompt = "You are a nutrition expert specializing in Indian and international cuisine. Parse meal descriptions and extract accurate nutritional information. Return ONLY a valid JSON object with: meal_name (string, cleaned up description), calories (integer), protein (float with 2 decimals), carbs (float with 2 decimals), fat (float with 2 decimals). No explanations, no markdown formatting - just raw JSON.";
 
-        $userPrompt = "Parse this meal and calculate total nutrition:\n\"{$mealInput}\"\n\nReturn JSON format:\n{\n  \"meal_name\": \"Clean, readable description\",\n  \"calories\": <total calories as integer>,\n  \"protein\": <grams as float>,\n  \"carbs\": <grams as float>,\n  \"fat\": <grams as float>\n}";
+        // Sanitize and wrap user input to prevent prompt injection
+        $sanitizedInput = $promptSecurity->sanitize($mealInput);
+        $userPrompt = "Parse the meal description provided between the markers and calculate total nutrition.\n\n"
+            . $promptSecurity->wrapUserInput($sanitizedInput)
+            . "\n\nReturn JSON format:\n{\n  \"meal_name\": \"Clean, readable description\",\n  \"calories\": <total calories as integer>,\n  \"protein\": <grams as float>,\n  \"carbs\": <grams as float>,\n  \"fat\": <grams as float>\n}";
 
         $response = $client->chat()->create([
             'model' => 'gpt-4o-mini',
@@ -299,9 +306,13 @@ class MealEntryController extends Controller
     private function generateMealInsight(string $apiKey, MealEntry $mealEntry, $activeGoal = null): string
     {
         $client = \OpenAI::client($apiKey);
+        $promptSecurity = new \App\Services\PromptSecurity();
 
-        // Build context about the meal
-        $mealContext = "Meal: {$mealEntry->meal_name}\n";
+        // Sanitize meal name to prevent injection via stored data
+        $safeMealName = $promptSecurity->sanitize($mealEntry->meal_name);
+
+        // Build context about the meal with sanitized data
+        $mealContext = "Meal: {$safeMealName}\n";
         $mealContext .= "Calories: {$mealEntry->calories}\n";
         $mealContext .= "Protein: {$mealEntry->protein}g\n";
         $mealContext .= "Carbs: {$mealEntry->carbs}g\n";

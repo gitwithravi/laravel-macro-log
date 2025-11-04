@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'profile.complete' => \App\Http\Middleware\EnsureProfileIsComplete::class,
+            'rate.limit.openai' => \App\Http\Middleware\RateLimitOpenAI::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

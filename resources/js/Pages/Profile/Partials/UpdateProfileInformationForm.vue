@@ -19,7 +19,7 @@ const form = useForm({
     date_of_birth: props.user.date_of_birth,
     gender: props.user.gender,
     height: props.user.height,
-    open_api_key: props.user.open_api_key,
+    open_api_key: '',  // Security: Never store actual API key in frontend
     photo: null,
 });
 

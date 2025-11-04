@@ -45,12 +45,18 @@ Route::middleware([
     // Dashboard & Meal Logging Routes
     Route::get('/dashboard', [MealEntryController::class, 'dashboard'])->name('dashboard');
     Route::get('/history', [MealEntryController::class, 'history'])->name('history');
-    Route::post('/meals', [MealEntryController::class, 'store'])->name('meals.store');
+
+    // OpenAI-powered routes with rate limiting
+    Route::middleware('rate.limit.openai')->group(function () {
+        Route::post('/meals', [MealEntryController::class, 'store'])->name('meals.store');
+        Route::get('/meals/{mealEntry}/insight', [MealEntryController::class, 'getInsight'])->name('meals.insight');
+        Route::post('/goals/calculate-nutrition', [GoalController::class, 'calculateNutrition'])->name('goals.calculate-nutrition');
+    });
+
+    // Other routes without OpenAI
     Route::delete('/meals/{mealEntry}', [MealEntryController::class, 'destroy'])->name('meals.destroy');
-    Route::get('/meals/{mealEntry}/insight', [MealEntryController::class, 'getInsight'])->name('meals.insight');
 
     // Goal Management Routes
     Route::resource('goals', GoalController::class)->except(['create', 'show', 'edit']);
     Route::post('/goals/{goal}/toggle-active', [GoalController::class, 'toggleActive'])->name('goals.toggle-active');
-    Route::post('/goals/calculate-nutrition', [GoalController::class, 'calculateNutrition'])->name('goals.calculate-nutrition');
 });

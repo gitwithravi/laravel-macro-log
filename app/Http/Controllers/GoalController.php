@@ -139,16 +139,25 @@ class GoalController extends Controller
         try {
             // Initialize OpenAI client with user's API key
             $client = \OpenAI::client($user->open_api_key);
+            $promptSecurity = new \App\Services\PromptSecurity();
 
-            // Build the prompt
+            // Build the prompt with security measures
             $systemPrompt = "You are a professional nutritionist and fitness expert. Calculate daily macronutrient goals based on user information. Return ONLY a valid JSON object with exactly four numeric values: daily_goal_calories (integer), daily_goal_protein (float with 2 decimals), daily_goal_carb (float with 2 decimals), daily_goal_fat (float with 2 decimals). No explanations, no additional text, no markdown formatting - just the raw JSON object.";
 
-            $userPrompt = "Calculate daily nutrition goals for:\n"
-                . "- Height: {$validated['height']} cm\n"
-                . "- Current Weight: {$validated['weight']} kg\n"
-                . "- Target Weight: {$validated['target_weight']} kg\n"
+            // Sanitize user inputs to prevent prompt injection
+            $safeHeight = $promptSecurity->sanitizeNumeric($validated['height'], 100, 250);
+            $safeWeight = $promptSecurity->sanitizeNumeric($validated['weight'], 20, 500);
+            $safeTargetWeight = $promptSecurity->sanitizeNumeric($validated['target_weight'], 20, 500);
+            $safeActivity = $promptSecurity->sanitize($validated['daily_activity']);
+
+            $userPrompt = "Calculate daily nutrition goals for the following data:\n\n"
+                . "===USER DATA START===\n"
+                . "- Height: {$safeHeight} cm\n"
+                . "- Current Weight: {$safeWeight} kg\n"
+                . "- Target Weight: {$safeTargetWeight} kg\n"
                 . "- Target Date: {$validated['target_date']}\n"
-                . "- Daily Activity: {$validated['daily_activity']}\n\n"
+                . "- Daily Activity: {$safeActivity}\n"
+                . "===USER DATA END===\n\n"
                 . "Consider safe weight loss/gain rates (0.5-1 kg per week) and balanced macronutrient distribution. "
                 . "Ensure adequate protein for muscle preservation, sufficient fats for hormonal health, and appropriate carbs for energy.";
 

@@ -48,6 +48,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
+        'open_api_key',  // Hide API key from serialization
     ];
 
     /**
@@ -71,6 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'date_of_birth' => 'date:Y-m-d',
             'height' => 'decimal:2',
+            'open_api_key' => 'encrypted',  // Encrypt API key at rest
         ];
     }
 

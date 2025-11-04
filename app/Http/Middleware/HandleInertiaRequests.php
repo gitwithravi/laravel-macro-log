@@ -40,7 +40,8 @@ class HandleInertiaRequests extends Middleware
                 'date_of_birth' => $request->user()->date_of_birth,
                 'gender' => $request->user()->gender,
                 'height' => $request->user()->height,
-                'open_api_key' => $request->user()->open_api_key,
+                // SECURITY: Never expose API keys to frontend
+                'has_api_key' => !empty($request->user()->open_api_key),
                 'has_completed_profile' => $request->user()->hasCompletedProfile(),
             ] : null,
         ]);
