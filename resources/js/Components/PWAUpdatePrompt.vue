@@ -5,14 +5,26 @@ const showUpdatePrompt = ref(false);
 const updateHandler = ref(null);
 
 onMounted(() => {
+    // Check if running as installed PWA
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                      || window.navigator.standalone
+                      || document.referrer.includes('android-app://');
+
     // Listen for service worker update
     window.addEventListener('swUpdateAvailable', (event) => {
-        showUpdatePrompt.value = true;
-        updateHandler.value = event.detail;
+        // Only show update prompt if running as installed PWA
+        if (isStandalone) {
+            console.log('PWA: Update available - showing prompt');
+            showUpdatePrompt.value = true;
+            updateHandler.value = event.detail;
+        } else {
+            console.log('PWA: Update available but not in standalone mode - skipping prompt');
+        }
     });
 });
 
 const updateApp = () => {
+    console.log('PWA: User accepted update - reloading app');
     if (updateHandler.value) {
         updateHandler.value();
     }
@@ -20,6 +32,7 @@ const updateApp = () => {
 };
 
 const dismissUpdate = () => {
+    console.log('PWA: User dismissed update prompt');
     showUpdatePrompt.value = false;
 };
 </script>
