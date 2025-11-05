@@ -11,10 +11,14 @@ import PWAUpdatePrompt from '@/Components/PWAUpdatePrompt.vue';
 import InstallPrompt from '@/Components/InstallPrompt.vue';
 import OfflineIndicator from '@/Components/OfflineIndicator.vue';
 import ProfileCompletionModal from '@/Components/ProfileCompletionModal.vue';
+import { useBackButtonHandler } from '@/composables/useBackButtonHandler';
 
 defineProps({
     title: String,
 });
+
+// Initialize back button handler for PWA globally
+useBackButtonHandler();
 
 const page = usePage();
 const showProfileCompletionModal = computed(() => {

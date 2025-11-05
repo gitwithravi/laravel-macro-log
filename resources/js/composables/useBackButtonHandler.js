@@ -8,92 +8,56 @@
  */
 
 import { onMounted, onUnmounted } from 'vue';
-import { router } from '@inertiajs/vue3';
 import {
     isPWA,
-    isAtSessionStart,
-    incrementNavigationDepth,
-    decrementNavigationDepth,
-    resetNavigationDepth
+    isAtHistorySentinel,
+    pushDummyState
 } from '@/utils/pwaNavigation';
 
 export function useBackButtonHandler() {
-    let isNavigatingBack = false;
     let popstateHandler = null;
 
     /**
      * Shows confirmation dialog when user tries to exit the app
      */
     function showExitConfirmation() {
-        return new Promise((resolve) => {
-            // Use native browser confirm dialog
-            const userConfirmed = window.confirm(
-                'Are you sure you want to exit the app?'
-            );
-            resolve(userConfirmed);
-        });
+        const userConfirmed = window.confirm(
+            'Are you sure you want to exit the app?'
+        );
+        return userConfirmed;
     }
 
     /**
      * Handles the browser back button press
      */
-    async function handlePopState(event) {
+    function handlePopState(event) {
         // Only handle in PWA mode
         if (!isPWA()) {
             return;
         }
 
-        // Check if we're at the session start
-        if (isAtSessionStart()) {
-            console.log('[Back Button] User at session start, showing exit confirmation');
+        console.log('[Back Button] popstate event fired', {
+            state: window.history.state,
+            url: window.location.href,
+            isAtSentinel: isAtHistorySentinel()
+        });
+
+        // Check if we've hit the sentinel (session start)
+        if (isAtHistorySentinel()) {
+            console.log('[Back Button] At session sentinel, intercepting back navigation');
 
             // Ask user for confirmation
-            const userConfirmed = await showExitConfirmation();
+            const userConfirmed = showExitConfirmation();
 
             if (!userConfirmed) {
-                // User cancelled, push a new state to stay in the app
-                console.log('[Back Button] User cancelled exit, staying in app');
-
-                // Push current page back into history to prevent exit
-                window.history.pushState(
-                    window.history.state,
-                    '',
-                    window.location.href
-                );
-
-                // Prevent Inertia from processing this navigation
-                event.preventDefault();
-                return;
+                // User cancelled, push state forward to stay in app
+                console.log('[Back Button] User cancelled exit, pushing forward');
+                pushDummyState();
             } else {
-                // User confirmed exit, allow the navigation
-                // This will typically minimize/close the PWA
-                console.log('[Back Button] User confirmed exit');
-                // Let the browser handle it naturally
-                return;
+                // User confirmed exit
+                console.log('[Back Button] User confirmed exit, allowing navigation');
+                // The app will close naturally or go to the system back behavior
             }
-        } else {
-            // Not at session start, allow normal back navigation
-            decrementNavigationDepth();
-            console.log('[Back Button] Normal back navigation');
-        }
-    }
-
-    /**
-     * Tracks forward navigation to maintain depth counter
-     */
-    function handleInertiaNavigate(event) {
-        // Only track in PWA mode
-        if (!isPWA()) {
-            return;
-        }
-
-        // Check if this is a back/forward navigation
-        const isBackNavigation = event.detail?.page?.url === window.location.href;
-
-        if (!isBackNavigation) {
-            // This is a forward navigation (link click, etc.)
-            incrementNavigationDepth();
-            console.log('[Navigation] Forward navigation detected');
         }
     }
 
@@ -105,9 +69,6 @@ export function useBackButtonHandler() {
         popstateHandler = handlePopState;
         window.addEventListener('popstate', popstateHandler);
 
-        // Listen to Inertia navigation events
-        router.on('navigate', handleInertiaNavigate);
-
         console.log('[Back Button Handler] Listeners initialized');
     }
 
@@ -118,8 +79,6 @@ export function useBackButtonHandler() {
         if (popstateHandler) {
             window.removeEventListener('popstate', popstateHandler);
         }
-
-        router.off('navigate', handleInertiaNavigate);
 
         console.log('[Back Button Handler] Listeners cleaned up');
     }

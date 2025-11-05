@@ -6,7 +6,8 @@
  */
 
 const SESSION_KEY = 'pwa-session-active';
-const NAVIGATION_DEPTH_KEY = 'pwa-nav-depth';
+const SESSION_START_URL_KEY = 'pwa-session-start-url';
+const HISTORY_SENTINEL_KEY = 'pwa-history-sentinel';
 
 /**
  * Detects if the app is running in standalone PWA mode
@@ -29,65 +30,69 @@ export function isFreshSession() {
  */
 export function markSessionActive() {
     sessionStorage.setItem(SESSION_KEY, 'true');
+    sessionStorage.setItem(SESSION_START_URL_KEY, window.location.href);
 }
 
 /**
- * Gets the current navigation depth (how many pages deep in current session)
+ * Gets the session start URL
  */
-export function getNavigationDepth() {
-    const depth = sessionStorage.getItem(NAVIGATION_DEPTH_KEY);
-    return depth ? parseInt(depth, 10) : 0;
+export function getSessionStartUrl() {
+    return sessionStorage.getItem(SESSION_START_URL_KEY);
 }
 
 /**
- * Sets the navigation depth
- */
-export function setNavigationDepth(depth) {
-    sessionStorage.setItem(NAVIGATION_DEPTH_KEY, depth.toString());
-}
-
-/**
- * Increments navigation depth (user navigated forward)
- */
-export function incrementNavigationDepth() {
-    const current = getNavigationDepth();
-    setNavigationDepth(current + 1);
-}
-
-/**
- * Decrements navigation depth (user navigated back)
- */
-export function decrementNavigationDepth() {
-    const current = getNavigationDepth();
-    if (current > 0) {
-        setNavigationDepth(current - 1);
-    }
-}
-
-/**
- * Resets navigation depth to 0
- */
-export function resetNavigationDepth() {
-    setNavigationDepth(0);
-}
-
-/**
- * Clears the browser history stack and starts fresh at the current page
+ * Clears the browser history stack by using a sentinel state
  * This prevents back button from going to previous session pages
  */
 export function clearHistoryStack() {
-    // Replace all history entries with current state
-    // This effectively clears the back stack
+    console.log('[PWA Navigation] Clearing history stack');
+
+    // Get current state
     const currentState = window.history.state;
     const currentUrl = window.location.href;
 
-    // Replace the current entry to clear the back stack
-    window.history.replaceState(currentState, '', currentUrl);
+    // Add a sentinel marker to indicate this is the start of the session
+    const sentinelState = {
+        ...currentState,
+        [HISTORY_SENTINEL_KEY]: true,
+        timestamp: Date.now()
+    };
 
-    // Reset navigation depth
-    resetNavigationDepth();
+    // Clear history by going back to length 1
+    // This is a trick: we replace the entire history with just the current page
+    window.history.replaceState(sentinelState, '', currentUrl);
 
-    console.log('[PWA Navigation] History stack cleared');
+    console.log('[PWA Navigation] History stack cleared, sentinel placed');
+}
+
+/**
+ * Checks if current history state is at the session sentinel
+ */
+export function isAtHistorySentinel() {
+    return window.history.state?.[HISTORY_SENTINEL_KEY] === true;
+}
+
+/**
+ * Checks if we're at the session start URL
+ */
+export function isAtSessionStartUrl() {
+    const startUrl = getSessionStartUrl();
+    return startUrl && window.location.href === startUrl;
+}
+
+/**
+ * Pushes a dummy state to enable back button interception
+ */
+export function pushDummyState() {
+    const currentState = window.history.state;
+    const dummyState = {
+        ...currentState,
+        dummy: true,
+        timestamp: Date.now()
+    };
+
+    window.history.pushState(dummyState, '', window.location.href);
+    console.log('[PWA Navigation] Dummy state pushed');
 }
 
 /**
@@ -103,28 +108,28 @@ export function initializePWANavigation() {
 
     // Check if this is a fresh session
     if (isFreshSession()) {
-        console.log('[PWA Navigation] Fresh session detected, clearing history stack');
-
-        // Clear the history stack to prevent going back to previous session
-        clearHistoryStack();
+        console.log('[PWA Navigation] Fresh session detected');
 
         // Mark session as active
         markSessionActive();
+
+        // Clear the history stack
+        clearHistoryStack();
+
+        // Push a dummy state to enable back button handling
+        // This creates: [sentinel] <- [dummy] (current)
+        // When user presses back, they go to sentinel, we detect it and push forward again
+        setTimeout(() => {
+            pushDummyState();
+        }, 100);
     } else {
         console.log('[PWA Navigation] Continuing existing session');
     }
-
-    // Clean up when page is unloaded (though this may not fire in PWA mode)
-    window.addEventListener('beforeunload', () => {
-        // sessionStorage will automatically clear when app truly closes
-        // But we log for debugging
-        console.log('[PWA Navigation] Page unloading');
-    });
 }
 
 /**
  * Checks if user is at the start of the session (can't go back further)
  */
 export function isAtSessionStart() {
-    return getNavigationDepth() === 0;
+    return isAtHistorySentinel() || isAtSessionStartUrl();
 }

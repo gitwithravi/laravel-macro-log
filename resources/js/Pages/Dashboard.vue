@@ -6,7 +6,6 @@ import TodaySummary from '@/Components/TodaySummary.vue';
 import MealEntryCard from '@/Components/MealEntryCard.vue';
 import FloatingActionButton from '@/Components/FloatingActionButton.vue';
 import MealLogModal from '@/Components/MealLogModal.vue';
-import { useBackButtonHandler } from '@/composables/useBackButtonHandler';
 
 const props = defineProps({
     todayMeals: Array,
@@ -14,9 +13,6 @@ const props = defineProps({
     activeGoal: Object,
     todayDate: String,
 });
-
-// Initialize back button handler for PWA
-useBackButtonHandler();
 
 const showMealModal = ref(false);
 
