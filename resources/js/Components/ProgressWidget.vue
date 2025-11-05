@@ -86,38 +86,49 @@ const colorClasses = computed(() => {
 </script>
 
 <template>
-    <div :class="['bg-gradient-to-br rounded-xl p-4 border', colorClasses.bg, colorClasses.border]">
-        <!-- Header with Icon and Label -->
-        <div class="flex items-center gap-2 mb-3">
-            <div :class="['w-8 h-8 rounded-lg flex items-center justify-center', colorClasses.iconBg]">
-                <div v-html="icon" class="w-4 h-4 text-white"></div>
+    <div :class="['bg-gradient-to-br rounded-xl p-4 border shadow-sm hover:shadow-md transition-all duration-200', colorClasses.bg, colorClasses.border]">
+        <!-- Mobile & Desktop: Optimized Layout -->
+        <div class="flex flex-col lg:flex-col gap-3">
+            <!-- Top Section: Icon, Label, and Value -->
+            <div class="flex items-center gap-2.5">
+                <!-- Icon -->
+                <div :class="['w-7 h-7 lg:w-8 lg:h-8 rounded-lg flex items-center justify-center shadow-sm flex-shrink-0', colorClasses.iconBg]">
+                    <div v-html="icon" class="w-3.5 h-3.5 lg:w-4 lg:h-4 text-white"></div>
+                </div>
+
+                <!-- Label and Value -->
+                <div class="flex flex-col gap-0.5 flex-1 min-w-0">
+                    <span :class="['text-xs font-semibold', colorClasses.text]">{{ label }}</span>
+                    <div class="flex items-baseline gap-1">
+                        <span :class="['text-lg lg:text-lg font-bold leading-none', colorClasses.text]">{{ consumed }}</span>
+                        <span :class="['text-sm font-normal', colorClasses.text]">/{{ goal }}</span>
+                        <span :class="['text-xs font-medium', colorClasses.subtext]">{{ unit }}</span>
+                    </div>
+                </div>
+
+                <!-- Percentage Badge -->
+                <div :class="['text-sm font-bold px-2 py-1 rounded-md bg-white/40', colorClasses.text]">
+                    {{ percentage }}%
+                </div>
             </div>
-            <span :class="['text-xs font-semibold', colorClasses.text]">{{ label }}</span>
-        </div>
 
-        <!-- Progress Value -->
-        <div :class="['text-lg font-bold mb-1', colorClasses.text]">
-            {{ consumed }}
-            <span class="text-base font-normal">/{{ goal }}</span>
-            <span class="text-sm font-medium ml-1">{{ unit }}</span>
-        </div>
+            <!-- Bottom Section: Progress Bar -->
+            <div class="flex flex-col gap-1.5">
+                <!-- Progress Bar -->
+                <div class="relative w-full h-2 bg-white/40 rounded-full overflow-hidden">
+                    <div
+                        :class="['h-full rounded-full transition-all duration-500', progressColor]"
+                        :style="{ width: `${percentage}%` }"
+                    ></div>
+                </div>
 
-        <!-- Progress Bar -->
-        <div class="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
-            <div
-                :class="['h-full rounded-full transition-all duration-500', progressColor]"
-                :style="{ width: `${percentage}%` }"
-            ></div>
-        </div>
-
-        <!-- Stats -->
-        <div class="flex items-center justify-between">
-            <span :class="['text-xs', colorClasses.subtext]">
-                {{ percentage }}%
-            </span>
-            <span :class="['text-xs', colorClasses.subtext]">
-                {{ remaining }}{{ unit }} left
-            </span>
+                <!-- Remaining Text -->
+                <div class="flex justify-end">
+                    <span :class="['text-xs font-medium', colorClasses.subtext]">
+                        {{ remaining }}{{ unit }} remaining
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
