@@ -8,11 +8,11 @@ const props = defineProps({
     },
     consumed: {
         type: Number,
-        required: true,
+        default: 0,
     },
     goal: {
         type: Number,
-        required: true,
+        default: 0,
     },
     unit: {
         type: String,
@@ -30,28 +30,36 @@ const props = defineProps({
 });
 
 const consumedRounded = computed(() => {
-    return parseFloat(props.consumed.toFixed(2));
+    const value = Number(props.consumed) || 0;
+    return parseFloat(value.toFixed(2));
 });
 
 const goalRounded = computed(() => {
-    return parseFloat(props.goal.toFixed(2));
+    const value = Number(props.goal) || 0;
+    return parseFloat(value.toFixed(2));
 });
 
 const percentage = computed(() => {
-    if (!props.goal || props.goal === 0) return 0;
-    const value = Math.min((props.consumed / props.goal) * 100, 100);
+    const consumed = Number(props.consumed) || 0;
+    const goal = Number(props.goal) || 0;
+    if (!goal || goal === 0) return 0;
+    const value = Math.min((consumed / goal) * 100, 100);
     return parseFloat(value.toFixed(2));
 });
 
 const remaining = computed(() => {
-    if (!props.goal || props.goal === 0) return 0;
-    const value = Math.max(props.goal - props.consumed, 0);
+    const consumed = Number(props.consumed) || 0;
+    const goal = Number(props.goal) || 0;
+    if (!goal || goal === 0) return 0;
+    const value = Math.max(goal - consumed, 0);
     return parseFloat(value.toFixed(2));
 });
 
 const progressColor = computed(() => {
-    if (!props.goal || props.goal === 0) return 'bg-gray-400';
-    const p = (props.consumed / props.goal) * 100;
+    const consumed = Number(props.consumed) || 0;
+    const goal = Number(props.goal) || 0;
+    if (!goal || goal === 0) return 'bg-gray-400';
+    const p = (consumed / goal) * 100;
     if (p < 90) return 'bg-emerald-500';
     if (p <= 100) return 'bg-yellow-500';
     if (p <= 110) return 'bg-orange-500';

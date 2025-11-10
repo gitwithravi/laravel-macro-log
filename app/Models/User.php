@@ -97,6 +97,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the frequent meals for the user.
+     */
+    public function frequentMeals(): HasMany
+    {
+        return $this->hasMany(FrequentMeal::class);
+    }
+
+    /**
      * Check if the user has completed their profile.
      */
     public function hasCompletedProfile(): bool

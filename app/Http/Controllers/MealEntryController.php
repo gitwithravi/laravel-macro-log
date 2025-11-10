@@ -109,31 +109,79 @@ class MealEntryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'raw_input' => ['required', 'string', 'max:1000'],
+            'raw_input' => ['nullable', 'string', 'max:1000'],
             'logged_date' => ['nullable', 'date'],
+            'frequent_meal_id' => ['nullable', 'integer', 'exists:frequent_meals,id'],
+            'portion_multiplier' => ['nullable', 'numeric', 'min:0.1', 'max:10'],
         ]);
 
         $user = auth()->user();
 
-        // Check if user has OpenAI API key configured
-        if (empty($user->open_api_key)) {
-            return response()->json([
-                'error' => 'OpenAI API key not configured. Please add your API key in profile settings.'
-            ], 400);
+        // Check if logging from frequent meal
+        if (!empty($validated['frequent_meal_id'])) {
+            // Load the frequent meal and verify ownership
+            $frequentMeal = \App\Models\FrequentMeal::findOrFail($validated['frequent_meal_id']);
+
+            if ($frequentMeal->user_id !== $user->id) {
+                return response()->json([
+                    'error' => 'Unauthorized action.'
+                ], 403);
+            }
+
+            // Get portion multiplier (default 1.0)
+            $multiplier = $validated['portion_multiplier'] ?? 1.0;
+
+            // Calculate scaled nutrition values
+            $nutritionData = [
+                'meal_name' => $frequentMeal->meal_name,
+                'calories' => (int) round($frequentMeal->calories * $multiplier),
+                'protein' => round($frequentMeal->protein * $multiplier, 2),
+                'carbs' => round($frequentMeal->carbs * $multiplier, 2),
+                'fat' => round($frequentMeal->fat * $multiplier, 2),
+            ];
+
+            // Use frequent meal name as raw input if not provided
+            $rawInput = $validated['raw_input'] ?? $frequentMeal->meal_name;
+        } else {
+            // Using raw input with OpenAI parsing
+            if (empty($validated['raw_input'])) {
+                return response()->json([
+                    'error' => 'Either raw_input or frequent_meal_id is required.'
+                ], 400);
+            }
+
+            // Check if user has OpenAI API key configured
+            if (empty($user->open_api_key)) {
+                return response()->json([
+                    'error' => 'OpenAI API key not configured. Please add your API key in profile settings.'
+                ], 400);
+            }
+
+            try {
+                // Parse meal with OpenAI
+                $nutritionData = $this->parseMealWithOpenAI(
+                    $user->open_api_key,
+                    $validated['raw_input']
+                );
+
+                $rawInput = $validated['raw_input'];
+            } catch (\OpenAI\Exceptions\ErrorException $e) {
+                return response()->json([
+                    'error' => 'OpenAI API error: ' . $e->getMessage()
+                ], 500);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => 'Failed to parse meal: ' . $e->getMessage()
+                ], 500);
+            }
         }
 
+        // Create meal entry
         try {
-            // Parse meal with OpenAI
-            $nutritionData = $this->parseMealWithOpenAI(
-                $user->open_api_key,
-                $validated['raw_input']
-            );
-
-            // Create meal entry
             $mealEntry = $user->mealEntries()->create([
                 'logged_date' => $validated['logged_date'] ?? now()->toDateString(),
                 'logged_time' => now()->toTimeString(),
-                'raw_input' => $validated['raw_input'],
+                'raw_input' => $rawInput,
                 'meal_name' => $nutritionData['meal_name'],
                 'calories' => $nutritionData['calories'],
                 'protein' => $nutritionData['protein'],
@@ -142,13 +190,9 @@ class MealEntryController extends Controller
             ]);
 
             return back()->with('success', 'Meal logged successfully!');
-        } catch (\OpenAI\Exceptions\ErrorException $e) {
-            return response()->json([
-                'error' => 'OpenAI API error: ' . $e->getMessage()
-            ], 500);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to parse meal: ' . $e->getMessage()
+                'error' => 'Failed to save meal: ' . $e->getMessage()
             ], 500);
         }
     }

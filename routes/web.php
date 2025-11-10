@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\FrequentMealController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\MealEntryController;
 use App\Http\Controllers\ProfileCompletionController;
@@ -51,10 +52,19 @@ Route::middleware([
         Route::post('/meals', [MealEntryController::class, 'store'])->name('meals.store');
         Route::get('/meals/{mealEntry}/insight', [MealEntryController::class, 'getInsight'])->name('meals.insight');
         Route::post('/goals/calculate-nutrition', [GoalController::class, 'calculateNutrition'])->name('goals.calculate-nutrition');
+
+        // Frequent Meals - Create (uses OpenAI)
+        Route::post('/frequent-meals', [FrequentMealController::class, 'store'])->name('frequent-meals.store');
     });
 
     // Other routes without OpenAI
     Route::delete('/meals/{mealEntry}', [MealEntryController::class, 'destroy'])->name('meals.destroy');
+
+    // Frequent Meals Routes (no OpenAI, no rate limiting)
+    Route::get('/frequent-meals', [FrequentMealController::class, 'index'])->name('frequent-meals.index');
+    Route::get('/api/frequent-meals', [FrequentMealController::class, 'list'])->name('frequent-meals.list');
+    Route::put('/frequent-meals/{frequentMeal}', [FrequentMealController::class, 'update'])->name('frequent-meals.update');
+    Route::delete('/frequent-meals/{frequentMeal}', [FrequentMealController::class, 'destroy'])->name('frequent-meals.destroy');
 
     // Goal Management Routes
     Route::resource('goals', GoalController::class)->except(['create', 'show', 'edit']);
