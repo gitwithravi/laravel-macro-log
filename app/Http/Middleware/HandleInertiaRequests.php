@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'profileFields' => $request->user() ? [
-                'date_of_birth' => $request->user()->date_of_birth,
+                'date_of_birth' => $request->user()->formatted_date_of_birth,
                 'gender' => $request->user()->gender,
                 'height' => $request->user()->height,
                 // SECURITY: Never expose API keys to frontend

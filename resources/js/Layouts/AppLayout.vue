@@ -62,7 +62,10 @@ const closeProfileMenu = () => {
         <InstallPrompt />
 
         <!-- Profile Completion Modal -->
-        <ProfileCompletionModal :show="showProfileCompletionModal" />
+        <ProfileCompletionModal
+            :show="showProfileCompletionModal"
+            :profile-fields="page.props.profileFields"
+        />
 
         <div class="min-h-screen bg-gray-100">
             <nav class="hidden sm:block bg-white border-b border-gray-100">

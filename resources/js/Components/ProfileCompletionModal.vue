@@ -12,12 +12,16 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    profileFields: {
+        type: Object,
+        default: null,
+    },
 });
 
 const form = useForm({
-    date_of_birth: '',
-    gender: '',
-    height: '',
+    date_of_birth: props.profileFields?.date_of_birth || '',
+    gender: props.profileFields?.gender || '',
+    height: props.profileFields?.height || '',
     open_api_key: '',
 });
 
