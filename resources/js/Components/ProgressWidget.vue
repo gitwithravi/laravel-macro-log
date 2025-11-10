@@ -29,6 +29,14 @@ const props = defineProps({
     },
 });
 
+const consumedRounded = computed(() => {
+    return parseFloat(props.consumed.toFixed(2));
+});
+
+const goalRounded = computed(() => {
+    return parseFloat(props.goal.toFixed(2));
+});
+
 const percentage = computed(() => {
     if (!props.goal || props.goal === 0) return 0;
     const value = Math.min((props.consumed / props.goal) * 100, 100);
@@ -100,8 +108,8 @@ const colorClasses = computed(() => {
                 <div class="flex flex-col gap-0.5 flex-1 min-w-0">
                     <span :class="['text-xs font-semibold', colorClasses.text]">{{ label }}</span>
                     <div class="flex items-baseline gap-1">
-                        <span :class="['text-lg lg:text-lg font-bold leading-none', colorClasses.text]">{{ consumed }}</span>
-                        <span :class="['text-sm font-normal', colorClasses.text]">/{{ goal }}</span>
+                        <span :class="['text-lg lg:text-lg font-bold leading-none', colorClasses.text]">{{ consumedRounded }}</span>
+                        <span :class="['text-sm font-normal', colorClasses.text]">/{{ goalRounded }}</span>
                         <span :class="['text-xs font-medium', colorClasses.subtext]">{{ unit }}</span>
                     </div>
                 </div>
