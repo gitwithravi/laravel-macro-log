@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DayHistoryCard from '@/Components/DayHistoryCard.vue';
+import HistorySummaryCard from '@/Components/HistorySummaryCard.vue';
 
 const props = defineProps({
     historyData: Object,
@@ -12,6 +13,10 @@ const props = defineProps({
     filterType: {
         type: String,
         default: '7',
+    },
+    summaryData: {
+        type: Object,
+        required: true,
     },
 });
 
@@ -271,6 +276,9 @@ const getFilterLabel = () => {
 
                 <!-- History List -->
                 <div v-else>
+                    <!-- Summary Card -->
+                    <HistorySummaryCard :summary-data="summaryData" class="mb-6" />
+
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-bold text-gray-900">{{ getFilterLabel() }}</h2>
                         <span class="text-sm text-gray-500">{{ historyDays.length }} {{ historyDays.length === 1 ? 'day' : 'days' }}</span>

@@ -115,6 +115,35 @@ class MealEntryController extends Controller
             $data['totals']['fat'] = round($data['totals']['fat'], 2);
         }
 
+        // Calculate summary statistics based on days with actual data
+        $daysWithData = count($historyData);
+        $summaryData = [
+            'daysWithData' => $daysWithData,
+            'averageCalories' => 0,
+            'averageProtein' => 0,
+            'averageCarbs' => 0,
+            'averageFat' => 0,
+        ];
+
+        if ($daysWithData > 0) {
+            $totalCalories = 0;
+            $totalProtein = 0;
+            $totalCarbs = 0;
+            $totalFat = 0;
+
+            foreach ($historyData as $dayData) {
+                $totalCalories += $dayData['totals']['calories'];
+                $totalProtein += $dayData['totals']['protein'];
+                $totalCarbs += $dayData['totals']['carbs'];
+                $totalFat += $dayData['totals']['fat'];
+            }
+
+            $summaryData['averageCalories'] = (int) round($totalCalories / $daysWithData);
+            $summaryData['averageProtein'] = round($totalProtein / $daysWithData, 2);
+            $summaryData['averageCarbs'] = round($totalCarbs / $daysWithData, 2);
+            $summaryData['averageFat'] = round($totalFat / $daysWithData, 2);
+        }
+
         // Get active goal
         $activeGoal = $user->goals()->where('is_active', true)->first();
 
@@ -124,6 +153,7 @@ class MealEntryController extends Controller
             'startDate' => $startDate->toDateString(),
             'endDate' => $endDate->toDateString(),
             'filterType' => $filterType,
+            'summaryData' => $summaryData,
         ]);
     }
 
