@@ -44,15 +44,38 @@ class MealEntryController extends Controller
     }
 
     /**
-     * Display meal history for the last 7 days.
+     * Display meal history with date range filtering.
      */
-    public function history(): Response
+    public function history(Request $request): Response
     {
         $user = auth()->user();
-        $endDate = now();
-        $startDate = now()->subDays(6); // Last 7 days including today
 
-        // Get all meal entries for the last 7 days
+        // Validate request parameters
+        $validated = $request->validate([
+            'filter_type' => ['nullable', 'in:7,30,90,custom'],
+            'start_date' => ['nullable', 'required_if:filter_type,custom', 'date', 'before_or_equal:today'],
+            'end_date' => ['nullable', 'required_if:filter_type,custom', 'date', 'before_or_equal:today', 'after_or_equal:start_date'],
+        ]);
+
+        $filterType = $validated['filter_type'] ?? '7';
+
+        // Calculate date range based on filter type
+        if ($filterType === 'custom' && isset($validated['start_date']) && isset($validated['end_date'])) {
+            $startDate = \Carbon\Carbon::parse($validated['start_date']);
+            $endDate = \Carbon\Carbon::parse($validated['end_date']);
+
+            // Enforce maximum range of 365 days
+            if ($startDate->diffInDays($endDate) > 365) {
+                return back()->withErrors(['date_range' => 'Maximum date range is 365 days.']);
+            }
+        } else {
+            // Use preset filter
+            $days = (int) $filterType;
+            $endDate = now();
+            $startDate = now()->subDays($days - 1); // Include today
+        }
+
+        // Get all meal entries for the date range
         $meals = $user->mealEntries()
             ->whereBetween('logged_date', [$startDate->toDateString(), $endDate->toDateString()])
             ->orderBy('logged_date', 'desc')
@@ -100,6 +123,7 @@ class MealEntryController extends Controller
             'activeGoal' => $activeGoal,
             'startDate' => $startDate->toDateString(),
             'endDate' => $endDate->toDateString(),
+            'filterType' => $filterType,
         ]);
     }
 
