@@ -27,6 +27,7 @@ class CreateNewUser implements CreatesNewUsers
             'gender' => ['required', 'in:male,female,other,prefer_not_to_say'],
             'timezone' => ['nullable', 'string', 'timezone:all'],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
+            'cf-turnstile-response' => ['required', 'turnstile'],
         ])->validate();
 
         return User::create([

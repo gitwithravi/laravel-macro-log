@@ -6,6 +6,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import GoogleSignIn from '@/Components/GoogleSignIn.vue';
+import Turnstile from '@/Components/Turnstile.vue';
 
 const form = useForm({
     name: '',
@@ -16,6 +17,7 @@ const form = useForm({
     password_confirmation: '',
     terms: false,
     timezone: 'UTC', // Default to UTC
+    'cf-turnstile-response': '', // Turnstile token
 });
 
 // Detect user's timezone on mount
@@ -191,6 +193,17 @@ const submit = () => {
                                 </div>
                             </div>
                             <InputError class="mt-2" :message="form.errors.terms" />
+                        </div>
+
+                        <!-- Cloudflare Turnstile -->
+                        <div class="pt-2">
+                            <Turnstile
+                                v-model="form['cf-turnstile-response']"
+                                :site-key="$page.props.turnstileSiteKey"
+                                theme="light"
+                                size="normal"
+                            />
+                            <InputError class="mt-2" :message="form.errors['cf-turnstile-response']" />
                         </div>
 
                         <!-- Submit Button -->

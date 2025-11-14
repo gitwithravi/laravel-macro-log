@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                 'has_api_key' => !empty($request->user()->open_api_key),
                 'has_completed_profile' => $request->user()->hasCompletedProfile(),
             ] : null,
+            'turnstileSiteKey' => config('services.turnstile.site_key', env('TURNSTILE_SITE_KEY')),
         ]);
     }
 }
