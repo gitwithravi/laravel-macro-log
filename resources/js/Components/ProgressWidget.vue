@@ -121,11 +121,6 @@ const colorClasses = computed(() => {
                         <span :class="['text-xs font-medium', colorClasses.subtext]">{{ unit }}</span>
                     </div>
                 </div>
-
-                <!-- Percentage Badge -->
-                <div :class="['text-sm font-bold px-2 py-1 rounded-md bg-white/40', colorClasses.text]">
-                    {{ percentage }}%
-                </div>
             </div>
 
             <!-- Bottom Section: Progress Bar -->
@@ -138,8 +133,11 @@ const colorClasses = computed(() => {
                     ></div>
                 </div>
 
-                <!-- Remaining Text -->
-                <div class="flex justify-end">
+                <!-- Percentage and Remaining Text -->
+                <div class="flex justify-between items-center">
+                    <span :class="['text-xs font-bold', colorClasses.text]">
+                        {{ percentage }}%
+                    </span>
                     <span :class="['text-xs font-medium', colorClasses.subtext]">
                         {{ remaining }}{{ unit }} remaining
                     </span>
