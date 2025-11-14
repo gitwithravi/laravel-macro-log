@@ -19,6 +19,7 @@ const form = useForm({
     date_of_birth: props.user.date_of_birth,
     gender: props.user.gender,
     height: props.user.height,
+    timezone: props.user.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
     open_api_key: '',  // Security: Never store actual API key in frontend
     photo: null,
 });
@@ -259,6 +260,37 @@ const clearPhotoFileInput = () => {
                     <InputError :message="form.errors.height" class="mt-2" />
                     <p class="mt-2 text-sm text-gray-500">
                         Used for calculating nutrition goals with AI.
+                    </p>
+                </div>
+
+                <!-- Timezone -->
+                <div>
+                    <InputLabel for="timezone" value="Timezone" />
+                    <select
+                        id="timezone"
+                        v-model="form.timezone"
+                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    >
+                        <optgroup label="Common Timezones">
+                            <option value="UTC">UTC (Coordinated Universal Time)</option>
+                            <option value="America/New_York">Eastern Time (New York)</option>
+                            <option value="America/Chicago">Central Time (Chicago)</option>
+                            <option value="America/Denver">Mountain Time (Denver)</option>
+                            <option value="America/Los_Angeles">Pacific Time (Los Angeles)</option>
+                            <option value="Europe/London">London</option>
+                            <option value="Europe/Paris">Central European Time (Paris)</option>
+                            <option value="Asia/Tokyo">Tokyo</option>
+                            <option value="Asia/Shanghai">China (Shanghai)</option>
+                            <option value="Asia/Kolkata">India (Kolkata)</option>
+                            <option value="Australia/Sydney">Sydney</option>
+                        </optgroup>
+                        <optgroup label="All Timezones">
+                            <option v-for="tz in Intl.supportedValuesOf('timeZone')" :key="tz" :value="tz">{{ tz }}</option>
+                        </optgroup>
+                    </select>
+                    <InputError :message="form.errors.timezone" class="mt-2" />
+                    <p class="mt-2 text-sm text-gray-500">
+                        Your timezone determines when each day starts for meal logging.
                     </p>
                 </div>
 

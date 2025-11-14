@@ -22,6 +22,7 @@ const activeTab = ref('describe'); // 'describe' or 'frequent'
 
 const form = useForm({
     raw_input: '',
+    logged_date: new Date().toISOString().split('T')[0], // Default to today
 });
 
 const isLoading = ref(false);
@@ -72,6 +73,7 @@ const submitMeal = async () => {
     try {
         await axios.post(route('meals.store'), {
             raw_input: form.raw_input,
+            logged_date: form.logged_date,
         });
 
         // Success
@@ -102,6 +104,7 @@ const handleFrequentMealSelect = async ({ meal, portionMultiplier }) => {
         await axios.post(route('meals.store'), {
             frequent_meal_id: meal.id,
             portion_multiplier: portionMultiplier,
+            logged_date: form.logged_date,
         });
 
         // Success
@@ -202,6 +205,22 @@ const switchTab = (tab) => {
 
                     <!-- Body -->
                     <div class="px-6 py-6 space-y-5">
+                        <!-- Date Selector (common for both tabs) -->
+                        <div>
+                            <InputLabel for="logged_date" value="Log meal for date" />
+                            <input
+                                id="logged_date"
+                                type="date"
+                                v-model="form.logged_date"
+                                :max="new Date().toISOString().split('T')[0]"
+                                class="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
+                                :disabled="isLoading"
+                            />
+                            <p class="mt-2 text-xs text-gray-500">
+                                Select the date to log this meal. Defaults to today.
+                            </p>
+                        </div>
+
                         <!-- Describe Meal Tab -->
                         <form v-if="activeTab === 'describe'" @submit.prevent="submitMeal" class="space-y-5">
                             <div>

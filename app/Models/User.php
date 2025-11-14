@@ -37,6 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'gender',
         'height',
         'open_api_key',
+        'timezone',
     ];
 
     /**
@@ -148,5 +149,58 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getHasOpenApiKeyAttribute(): bool
     {
         return !empty($this->open_api_key);
+    }
+
+    /**
+     * Get the user's timezone or default to UTC.
+     */
+    public function getUserTimezone(): string
+    {
+        return $this->timezone ?? 'UTC';
+    }
+
+    /**
+     * Get the current time in the user's timezone.
+     */
+    public function getUserNow(): \Carbon\Carbon
+    {
+        return now()->setTimezone($this->getUserTimezone());
+    }
+
+    /**
+     * Convert a Carbon instance to the user's timezone.
+     */
+    public function convertToUserTimezone(\Carbon\Carbon $date): \Carbon\Carbon
+    {
+        return $date->setTimezone($this->getUserTimezone());
+    }
+
+    /**
+     * Get today's date in the user's timezone.
+     */
+    public function getUserToday(): string
+    {
+        return $this->getUserNow()->toDateString();
+    }
+
+    /**
+     * Get the start and end of a day in the user's timezone as UTC timestamps.
+     * This is useful for database queries.
+     */
+    public function getDayBoundariesInUtc(string $date): array
+    {
+        $userTimezone = $this->getUserTimezone();
+
+        // Create the start of the day in user's timezone
+        $startOfDay = \Carbon\Carbon::parse($date, $userTimezone)->startOfDay();
+
+        // Create the end of the day in user's timezone
+        $endOfDay = \Carbon\Carbon::parse($date, $userTimezone)->endOfDay();
+
+        // Convert both to UTC for database queries
+        return [
+            'start' => $startOfDay->utc(),
+            'end' => $endOfDay->utc(),
+        ];
     }
 }

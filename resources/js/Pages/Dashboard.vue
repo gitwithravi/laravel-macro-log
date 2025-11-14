@@ -12,6 +12,7 @@ const props = defineProps({
     todayTotals: Object,
     activeGoal: Object,
     todayDate: String,
+    userTimezone: String,
 });
 
 const showMealModal = ref(false);

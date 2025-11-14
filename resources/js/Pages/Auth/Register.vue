@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -14,6 +15,19 @@ const form = useForm({
     password: '',
     password_confirmation: '',
     terms: false,
+    timezone: 'UTC', // Default to UTC
+});
+
+// Detect user's timezone on mount
+onMounted(() => {
+    try {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (timezone) {
+            form.timezone = timezone;
+        }
+    } catch (e) {
+        console.warn('Could not detect timezone, using UTC as default');
+    }
 });
 
 const submit = () => {

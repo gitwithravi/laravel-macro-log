@@ -15,8 +15,7 @@ class MealEntry extends Model
      */
     protected $fillable = [
         'user_id',
-        'logged_date',
-        'logged_time',
+        'logged_at',
         'raw_input',
         'meal_name',
         'calories',
@@ -33,8 +32,7 @@ class MealEntry extends Model
     protected function casts(): array
     {
         return [
-            'logged_date' => 'date',
-            'logged_time' => 'datetime:H:i',
+            'logged_at' => 'datetime',
             'calories' => 'integer',
             'protein' => 'decimal:2',
             'carbs' => 'decimal:2',
@@ -56,5 +54,57 @@ class MealEntry extends Model
     public function insight(): HasOne
     {
         return $this->hasOne(MealInsight::class);
+    }
+
+    /**
+     * Get the logged date in the user's timezone.
+     */
+    public function getLoggedDateInUserTimezone(): string
+    {
+        if (!$this->logged_at || !$this->user) {
+            return '';
+        }
+
+        return $this->logged_at->setTimezone($this->user->getUserTimezone())->toDateString();
+    }
+
+    /**
+     * Get the logged time in the user's timezone.
+     */
+    public function getLoggedTimeInUserTimezone(): string
+    {
+        if (!$this->logged_at || !$this->user) {
+            return '';
+        }
+
+        return $this->logged_at->setTimezone($this->user->getUserTimezone())->format('H:i:s');
+    }
+
+    /**
+     * Get the logged datetime in the user's timezone.
+     */
+    public function getLoggedAtInUserTimezone(): \Carbon\Carbon
+    {
+        if (!$this->logged_at || !$this->user) {
+            return now();
+        }
+
+        return $this->logged_at->setTimezone($this->user->getUserTimezone());
+    }
+
+    /**
+     * Accessor for backwards compatibility with logged_date.
+     */
+    public function getLoggedDateAttribute(): string
+    {
+        return $this->getLoggedDateInUserTimezone();
+    }
+
+    /**
+     * Accessor for backwards compatibility with logged_time.
+     */
+    public function getLoggedTimeAttribute(): string
+    {
+        return $this->getLoggedTimeInUserTimezone();
     }
 }

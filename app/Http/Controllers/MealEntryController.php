@@ -15,13 +15,15 @@ class MealEntryController extends Controller
     public function dashboard(): Response
     {
         $user = auth()->user();
-        $today = now()->toDateString();
 
-        // Get today's meal entries
+        // Get "today" in the user's timezone
+        $today = $user->getUserToday();
+        $dayBoundaries = $user->getDayBoundariesInUtc($today);
+
+        // Get today's meal entries using UTC boundaries
         $todayMeals = $user->mealEntries()
-            ->whereDate('logged_date', $today)
-            ->orderBy('logged_time', 'desc')
-            ->orderBy('created_at', 'desc')
+            ->whereBetween('logged_at', [$dayBoundaries['start'], $dayBoundaries['end']])
+            ->orderBy('logged_at', 'desc')
             ->get();
 
         // Calculate today's totals
@@ -40,6 +42,7 @@ class MealEntryController extends Controller
             'todayTotals' => $todayTotals,
             'activeGoal' => $activeGoal,
             'todayDate' => $today,
+            'userTimezone' => $user->getUserTimezone(),
         ]);
     }
 
@@ -49,6 +52,7 @@ class MealEntryController extends Controller
     public function history(Request $request): Response
     {
         $user = auth()->user();
+        $userTimezone = $user->getUserTimezone();
 
         // Validate request parameters
         $validated = $request->validate([
@@ -61,8 +65,9 @@ class MealEntryController extends Controller
 
         // Calculate date range based on filter type
         if ($filterType === 'custom' && isset($validated['start_date']) && isset($validated['end_date'])) {
-            $startDate = \Carbon\Carbon::parse($validated['start_date']);
-            $endDate = \Carbon\Carbon::parse($validated['end_date']);
+            // Parse dates in user's timezone
+            $startDate = \Carbon\Carbon::parse($validated['start_date'], $userTimezone)->startOfDay();
+            $endDate = \Carbon\Carbon::parse($validated['end_date'], $userTimezone)->endOfDay();
 
             // Enforce maximum range of 365 days
             if ($startDate->diffInDays($endDate) > 365) {
@@ -71,22 +76,25 @@ class MealEntryController extends Controller
         } else {
             // Use preset filter
             $days = (int) $filterType;
-            $endDate = now();
-            $startDate = now()->subDays($days - 1); // Include today
+            $endDate = $user->getUserNow()->endOfDay();
+            $startDate = $user->getUserNow()->subDays($days - 1)->startOfDay(); // Include today
         }
+
+        // Convert to UTC for database query
+        $utcStart = $startDate->utc();
+        $utcEnd = $endDate->utc();
 
         // Get all meal entries for the date range
         $meals = $user->mealEntries()
-            ->whereBetween('logged_date', [$startDate->toDateString(), $endDate->toDateString()])
-            ->orderBy('logged_date', 'desc')
-            ->orderBy('logged_time', 'desc')
-            ->orderBy('created_at', 'desc')
+            ->whereBetween('logged_at', [$utcStart, $utcEnd])
+            ->orderBy('logged_at', 'desc')
             ->get();
 
-        // Group meals by date and calculate daily totals
+        // Group meals by date (in user's timezone) and calculate daily totals
         $historyData = [];
         foreach ($meals as $meal) {
-            $date = $meal->logged_date->toDateString();
+            // Get date in user's timezone
+            $date = $meal->getLoggedDateInUserTimezone();
 
             if (!isset($historyData[$date])) {
                 $historyData[$date] = [
@@ -97,7 +105,7 @@ class MealEntryController extends Controller
                         'carbs' => 0,
                         'fat' => 0,
                     ],
-                    'date' => $meal->logged_date,
+                    'date' => $date,
                 ];
             }
 
@@ -150,10 +158,11 @@ class MealEntryController extends Controller
         return Inertia::render('History', [
             'historyData' => $historyData,
             'activeGoal' => $activeGoal,
-            'startDate' => $startDate->toDateString(),
-            'endDate' => $endDate->toDateString(),
+            'startDate' => $startDate->setTimezone($userTimezone)->toDateString(),
+            'endDate' => $endDate->setTimezone($userTimezone)->toDateString(),
             'filterType' => $filterType,
             'summaryData' => $summaryData,
+            'userTimezone' => $userTimezone,
         ]);
     }
 
@@ -232,9 +241,18 @@ class MealEntryController extends Controller
 
         // Create meal entry
         try {
+            // If logged_date is provided, parse it in user's timezone, otherwise use current time in user's timezone
+            if (isset($validated['logged_date'])) {
+                // Parse the date in user's timezone and set time to current time in that timezone
+                $loggedAt = \Carbon\Carbon::parse($validated['logged_date'], $user->getUserTimezone())
+                    ->setTimeFrom($user->getUserNow());
+            } else {
+                // Use current time in user's timezone
+                $loggedAt = $user->getUserNow();
+            }
+
             $mealEntry = $user->mealEntries()->create([
-                'logged_date' => $validated['logged_date'] ?? now()->toDateString(),
-                'logged_time' => now()->toTimeString(),
+                'logged_at' => $loggedAt->utc(), // Store in UTC
                 'raw_input' => $rawInput,
                 'meal_name' => $nutritionData['meal_name'],
                 'calories' => $nutritionData['calories'],

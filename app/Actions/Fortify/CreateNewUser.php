@@ -25,6 +25,7 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
             'date_of_birth' => ['required', 'date', 'before:today'],
             'gender' => ['required', 'in:male,female,other,prefer_not_to_say'],
+            'timezone' => ['nullable', 'string', 'timezone:all'],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
@@ -34,6 +35,7 @@ class CreateNewUser implements CreatesNewUsers
             'password' => Hash::make($input['password']),
             'date_of_birth' => $input['date_of_birth'],
             'gender' => $input['gender'],
+            'timezone' => $input['timezone'] ?? 'UTC',
         ]);
     }
 }

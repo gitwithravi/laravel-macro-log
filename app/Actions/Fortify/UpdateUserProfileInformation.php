@@ -24,6 +24,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other,prefer_not_to_say'],
             'height' => ['nullable', 'numeric', 'min:100', 'max:250'],
+            'timezone' => ['nullable', 'string', 'timezone:all'],
             'open_api_key' => ['nullable', 'string', 'max:255'],
         ])->validateWithBag('updateProfileInformation');
 
@@ -41,6 +42,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'date_of_birth' => $input['date_of_birth'] ?? null,
                 'gender' => $input['gender'] ?? null,
                 'height' => $input['height'] ?? null,
+                'timezone' => $input['timezone'] ?? 'UTC',
                 'open_api_key' => !empty($input['open_api_key']) ? $input['open_api_key'] : null,
             ])->save();
         }
@@ -60,6 +62,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'date_of_birth' => $input['date_of_birth'] ?? null,
             'gender' => $input['gender'] ?? null,
             'height' => $input['height'] ?? null,
+            'timezone' => $input['timezone'] ?? 'UTC',
             'open_api_key' => !empty($input['open_api_key']) ? $input['open_api_key'] : null,
         ])->save();
 

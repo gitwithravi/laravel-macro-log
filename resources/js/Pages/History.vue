@@ -18,6 +18,7 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    userTimezone: String,
 });
 
 // Filter state
