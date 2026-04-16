@@ -166,10 +166,7 @@ class FrequentMealController extends Controller
 
         $frequentMeal->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Frequent meal deleted successfully!'
-        ]);
+        return back()->with('success', 'Frequent meal deleted successfully!');
     }
 
     /**
