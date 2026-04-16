@@ -163,7 +163,7 @@ class GoalController extends Controller
 
             // Call OpenAI API
             $response = $client->chat()->create([
-                'model' => 'gpt-4o-mini',
+                'model' => 'gpt-4.1',
                 'messages' => [
                     [
                         'role' => 'system',

@@ -364,7 +364,7 @@ class MealEntryController extends Controller
             . "\n\nReturn JSON format:\n{\n  \"meal_name\": \"Clean, readable description\",\n  \"calories\": <total calories as integer>,\n  \"protein\": <grams as float>,\n  \"carbs\": <grams as float>,\n  \"fat\": <grams as float>\n}";
 
         $response = $client->chat()->create([
-            'model' => 'gpt-4o-mini',
+            'model' => 'gpt-4.1',
             'messages' => [
                 [
                     'role' => 'system',
@@ -449,7 +449,7 @@ class MealEntryController extends Controller
         $userPrompt = "{$mealContext}{$goalContext}\n\nProvide a brief insight (2-3 sentences) about this meal. Include:\n1. Whether it aligns with the goals (if goals are provided)\n2. What's good about this meal\n3. One practical improvement or tip if applicable\n\nKeep it positive and actionable.";
 
         $response = $client->chat()->create([
-            'model' => 'gpt-4o-mini',
+            'model' => 'gpt-4.1',
             'messages' => [
                 [
                     'role' => 'system',
