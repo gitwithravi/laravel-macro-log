@@ -287,6 +287,52 @@ class MealEntryController extends Controller
     }
 
     /**
+     * Update the component breakdown for a meal entry and recompute totals.
+     */
+    public function updateComponents(Request $request, MealEntry $mealEntry)
+    {
+        if ($mealEntry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'components' => ['required', 'array', 'min:1', 'max:30'],
+            'components.*.name' => ['required', 'string', 'max:100'],
+            'components.*.grams' => ['required', 'numeric', 'min:0', 'max:5000'],
+            'components.*.calories' => ['required', 'numeric', 'min:0', 'max:10000'],
+            'components.*.protein' => ['required', 'numeric', 'min:0', 'max:1000'],
+            'components.*.carbs' => ['required', 'numeric', 'min:0', 'max:1000'],
+            'components.*.fat' => ['required', 'numeric', 'min:0', 'max:1000'],
+        ]);
+
+        $components = array_values(array_map(fn (array $c) => [
+            'name' => (string) $c['name'],
+            'grams' => round((float) $c['grams'], 1),
+            'calories' => (int) round((float) $c['calories']),
+            'protein' => round((float) $c['protein'], 2),
+            'carbs' => round((float) $c['carbs'], 2),
+            'fat' => round((float) $c['fat'], 2),
+        ], $validated['components']));
+
+        $totals = [
+            'calories' => (int) round(array_sum(array_column($components, 'calories'))),
+            'protein' => round(array_sum(array_column($components, 'protein')), 2),
+            'carbs' => round(array_sum(array_column($components, 'carbs')), 2),
+            'fat' => round(array_sum(array_column($components, 'fat')), 2),
+        ];
+
+        $mealEntry->update([
+            'components' => $components,
+            'calories' => $totals['calories'],
+            'protein' => $totals['protein'],
+            'carbs' => $totals['carbs'],
+            'fat' => $totals['fat'],
+        ]);
+
+        return back()->with('success', 'Meal breakdown updated!');
+    }
+
+    /**
      * Get or generate insight for a meal entry.
      */
     public function getInsight(MealEntry $mealEntry)

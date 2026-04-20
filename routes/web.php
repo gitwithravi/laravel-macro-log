@@ -59,6 +59,7 @@ Route::middleware([
 
     // Other routes without OpenAI
     Route::delete('/meals/{mealEntry}', [MealEntryController::class, 'destroy'])->name('meals.destroy');
+    Route::put('/meals/{mealEntry}/components', [MealEntryController::class, 'updateComponents'])->name('meals.components.update');
 
     // Frequent Meals Routes (no OpenAI, no rate limiting)
     Route::get('/frequent-meals', [FrequentMealController::class, 'index'])->name('frequent-meals.index');
