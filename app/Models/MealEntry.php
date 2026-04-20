@@ -22,6 +22,7 @@ class MealEntry extends Model
         'protein',
         'carbs',
         'fat',
+        'components',
     ];
 
     /**
@@ -37,6 +38,7 @@ class MealEntry extends Model
             'protein' => 'decimal:2',
             'carbs' => 'decimal:2',
             'fat' => 'decimal:2',
+            'components' => 'array',
         ];
     }
 

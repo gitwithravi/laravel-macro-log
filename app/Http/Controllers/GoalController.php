@@ -165,17 +165,29 @@ class GoalController extends Controller
             $response = $client->chat()->create([
                 'model' => 'gpt-4.1',
                 'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => $systemPrompt
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $userPrompt
-                    ]
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => $userPrompt],
                 ],
-                'temperature' => 0.7,
-                'max_tokens' => 200,
+                'temperature' => 0.2,
+                'max_tokens' => 300,
+                'response_format' => [
+                    'type' => 'json_schema',
+                    'json_schema' => [
+                        'name' => 'nutrition_goals',
+                        'strict' => true,
+                        'schema' => [
+                            'type' => 'object',
+                            'additionalProperties' => false,
+                            'required' => ['daily_goal_calories', 'daily_goal_protein', 'daily_goal_carb', 'daily_goal_fat'],
+                            'properties' => [
+                                'daily_goal_calories' => ['type' => 'number'],
+                                'daily_goal_protein' => ['type' => 'number'],
+                                'daily_goal_carb' => ['type' => 'number'],
+                                'daily_goal_fat' => ['type' => 'number'],
+                            ],
+                        ],
+                    ],
+                ],
             ]);
 
             // Extract content from response
@@ -184,11 +196,6 @@ class GoalController extends Controller
             if (!$content) {
                 throw new \Exception('Empty response from OpenAI');
             }
-
-            // Clean the response - remove markdown code blocks if present
-            $content = preg_replace('/```json\s*/i', '', $content);
-            $content = preg_replace('/```\s*/', '', $content);
-            $content = trim($content);
 
             // Parse JSON response
             $nutrition = json_decode($content, true);

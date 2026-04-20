@@ -93,6 +93,7 @@ class FrequentMealController extends Controller
                 'protein' => $nutrition['protein'],
                 'carbs' => $nutrition['carbs'],
                 'fat' => $nutrition['fat'],
+                'components' => $nutrition['components'] ?? null,
             ]);
 
             return back()->with('success', 'Frequent meal added successfully!');
@@ -179,64 +180,113 @@ class FrequentMealController extends Controller
         // Use PromptSecurity service to prevent injection attacks
         $promptSecurity = new PromptSecurity();
 
-        $systemPrompt = "You are a nutrition expert specializing in Indian and international cuisine. Parse meal descriptions and extract accurate nutritional information. Return ONLY a valid JSON object with: meal_name (string, cleaned up description), calories (integer), protein (float with 2 decimals), carbs (float with 2 decimals), fat (float with 2 decimals). No explanations, no markdown formatting - just raw JSON.";
+        $systemPrompt = "You are a nutrition expert specializing in Indian and international cuisine. "
+            . "Estimate macros by breaking the meal into its individual components and reasoning about portions explicitly — do NOT guess a single total.\n\n"
+            . "For every meal:\n"
+            . "1. Split it into each distinct food item (e.g. '2 rotis + dal + rice' = three components).\n"
+            . "2. For each component, resolve the portion to an explicit weight in grams. If the user gives a count (e.g. '2 rotis'), use a typical per-unit weight for that cuisine (1 roti ≈ 40g, 1 idli ≈ 35g, 1 chapati ≈ 40g, 1 medium dosa ≈ 80g, 1 samosa ≈ 60g, 1 slice bread ≈ 30g, 1 cup cooked rice ≈ 180g, 1 cup cooked dal ≈ 200g, 1 egg ≈ 50g). If the user gives a plate/bowl/serving, use standard restaurant portions.\n"
+            . "3. Use realistic per-100g values grounded in standard references (IFCT for Indian foods, USDA for others). Account for cooking oil/ghee in Indian gravies (~5–10g fat per serving).\n"
+            . "4. Compute each component's macros from grams × per-100g values, then sum across components for the totals.\n"
+            . "5. Round protein/carbs/fat to 1 decimal; calories to integer. Totals must equal the sum of components (within rounding).\n\n"
+            . "Return only the structured JSON object — no prose.";
 
         // Sanitize and wrap user input to prevent prompt injection
         $sanitizedInput = $promptSecurity->sanitize($mealInput);
-        $userPrompt = "Parse the meal description provided between the markers and calculate total nutrition.\n\n"
-            . $promptSecurity->wrapUserInput($sanitizedInput)
-            . "\n\nReturn JSON format:\n{\n  \"meal_name\": \"Clean, readable description\",\n  \"calories\": <total calories as integer>,\n  \"protein\": <grams as float>,\n  \"carbs\": <grams as float>,\n  \"fat\": <grams as float>\n}";
+        $userPrompt = "Parse the meal description provided between the markers. Break it into components with explicit gram weights, compute macros per component, then sum to totals.\n\n"
+            . $promptSecurity->wrapUserInput($sanitizedInput);
 
         $response = $client->chat()->create([
             'model' => 'gpt-4.1',
             'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => $systemPrompt
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $userPrompt
-                ]
+                ['role' => 'system', 'content' => $systemPrompt],
+                ['role' => 'user', 'content' => $userPrompt],
             ],
-            'temperature' => 0.7,
-            'max_tokens' => 200,
+            'temperature' => 0.2,
+            'max_tokens' => 900,
+            'response_format' => [
+                'type' => 'json_schema',
+                'json_schema' => [
+                    'name' => 'meal_nutrition',
+                    'strict' => true,
+                    'schema' => [
+                        'type' => 'object',
+                        'additionalProperties' => false,
+                        'required' => ['meal_name', 'components', 'totals'],
+                        'properties' => [
+                            'meal_name' => ['type' => 'string'],
+                            'components' => [
+                                'type' => 'array',
+                                'minItems' => 1,
+                                'items' => [
+                                    'type' => 'object',
+                                    'additionalProperties' => false,
+                                    'required' => ['name', 'grams', 'calories', 'protein', 'carbs', 'fat'],
+                                    'properties' => [
+                                        'name' => ['type' => 'string'],
+                                        'grams' => ['type' => 'number'],
+                                        'calories' => ['type' => 'number'],
+                                        'protein' => ['type' => 'number'],
+                                        'carbs' => ['type' => 'number'],
+                                        'fat' => ['type' => 'number'],
+                                    ],
+                                ],
+                            ],
+                            'totals' => [
+                                'type' => 'object',
+                                'additionalProperties' => false,
+                                'required' => ['calories', 'protein', 'carbs', 'fat'],
+                                'properties' => [
+                                    'calories' => ['type' => 'number'],
+                                    'protein' => ['type' => 'number'],
+                                    'carbs' => ['type' => 'number'],
+                                    'fat' => ['type' => 'number'],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
-        // Extract content from response
         $content = $response['choices'][0]['message']['content'] ?? null;
 
         if (!$content) {
             throw new \Exception('Empty response from OpenAI');
         }
 
-        // Clean the response - remove markdown code blocks if present
-        $content = preg_replace('/```json\s*/i', '', $content);
-        $content = preg_replace('/```\s*/', '', $content);
-        $content = trim($content);
-
-        // Parse JSON response
-        $nutrition = json_decode($content, true);
+        $parsed = json_decode($content, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \Exception('Invalid JSON response from OpenAI: ' . json_last_error_msg());
         }
 
-        // Validate response structure
-        $requiredFields = ['meal_name', 'calories', 'protein', 'carbs', 'fat'];
-        foreach ($requiredFields as $field) {
-            if (!isset($nutrition[$field])) {
-                throw new \Exception("Missing field in OpenAI response: {$field}");
+        if (!isset($parsed['meal_name'], $parsed['totals'], $parsed['components'])) {
+            throw new \Exception('Malformed OpenAI response: missing meal_name, totals, or components');
+        }
+
+        $totals = $parsed['totals'];
+        foreach (['calories', 'protein', 'carbs', 'fat'] as $field) {
+            if (!isset($totals[$field])) {
+                throw new \Exception("Missing totals.{$field} in OpenAI response");
             }
         }
 
-        // Return standardized nutrition data
+        $components = array_values(array_map(fn (array $c) => [
+            'name' => (string) ($c['name'] ?? ''),
+            'grams' => round((float) ($c['grams'] ?? 0), 1),
+            'calories' => (int) round((float) ($c['calories'] ?? 0)),
+            'protein' => round((float) ($c['protein'] ?? 0), 2),
+            'carbs' => round((float) ($c['carbs'] ?? 0), 2),
+            'fat' => round((float) ($c['fat'] ?? 0), 2),
+        ], $parsed['components']));
+
         return [
-            'meal_name' => $nutrition['meal_name'],
-            'calories' => (int) $nutrition['calories'],
-            'protein' => round((float) $nutrition['protein'], 2),
-            'carbs' => round((float) $nutrition['carbs'], 2),
-            'fat' => round((float) $nutrition['fat'], 2),
+            'meal_name' => $parsed['meal_name'],
+            'calories' => (int) round((float) $totals['calories']),
+            'protein' => round((float) $totals['protein'], 2),
+            'carbs' => round((float) $totals['carbs'], 2),
+            'fat' => round((float) $totals['fat'], 2),
+            'components' => $components,
         ];
     }
 }
