@@ -160,7 +160,6 @@ const icons = {
                     v-for="meal in dayData.meals"
                     :key="meal.id"
                     :meal="meal"
-                    :readonly="true"
                 />
             </div>
         </transition>
