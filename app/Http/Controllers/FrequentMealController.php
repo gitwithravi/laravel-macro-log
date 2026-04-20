@@ -156,6 +156,45 @@ class FrequentMealController extends Controller
     }
 
     /**
+     * Update the component breakdown for a frequent meal and recompute totals.
+     */
+    public function updateComponents(Request $request, FrequentMeal $frequentMeal)
+    {
+        if ($frequentMeal->user_id !== $request->user()->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'components' => ['required', 'array', 'min:1', 'max:30'],
+            'components.*.name' => ['required', 'string', 'max:100'],
+            'components.*.grams' => ['required', 'numeric', 'min:0', 'max:5000'],
+            'components.*.calories' => ['required', 'numeric', 'min:0', 'max:10000'],
+            'components.*.protein' => ['required', 'numeric', 'min:0', 'max:1000'],
+            'components.*.carbs' => ['required', 'numeric', 'min:0', 'max:1000'],
+            'components.*.fat' => ['required', 'numeric', 'min:0', 'max:1000'],
+        ]);
+
+        $components = array_values(array_map(fn (array $c) => [
+            'name' => (string) $c['name'],
+            'grams' => round((float) $c['grams'], 1),
+            'calories' => (int) round((float) $c['calories']),
+            'protein' => round((float) $c['protein'], 2),
+            'carbs' => round((float) $c['carbs'], 2),
+            'fat' => round((float) $c['fat'], 2),
+        ], $validated['components']));
+
+        $frequentMeal->update([
+            'components' => $components,
+            'calories' => (int) round(array_sum(array_column($components, 'calories'))),
+            'protein' => round(array_sum(array_column($components, 'protein')), 2),
+            'carbs' => round(array_sum(array_column($components, 'carbs')), 2),
+            'fat' => round(array_sum(array_column($components, 'fat')), 2),
+        ]);
+
+        return back()->with('success', 'Breakdown updated!');
+    }
+
+    /**
      * Remove the specified frequent meal from storage.
      */
     public function destroy(Request $request, FrequentMeal $frequentMeal)

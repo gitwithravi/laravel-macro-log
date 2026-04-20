@@ -65,6 +65,7 @@ Route::middleware([
     Route::get('/frequent-meals', [FrequentMealController::class, 'index'])->name('frequent-meals.index');
     Route::get('/api/frequent-meals', [FrequentMealController::class, 'list'])->name('frequent-meals.list');
     Route::put('/frequent-meals/{frequentMeal}', [FrequentMealController::class, 'update'])->name('frequent-meals.update');
+    Route::put('/frequent-meals/{frequentMeal}/components', [FrequentMealController::class, 'updateComponents'])->name('frequent-meals.components.update');
     Route::delete('/frequent-meals/{frequentMeal}', [FrequentMealController::class, 'destroy'])->name('frequent-meals.destroy');
 
     // Goal Management Routes
